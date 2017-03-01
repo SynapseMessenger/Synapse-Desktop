@@ -1,0 +1,28 @@
+{
+  "name": "synapse-server",
+  "version": "0.0.1",
+  "description": "Synapse server",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node server.js"
+  },
+  "author": "marcofp",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "express": "*",
+    "socket.io": "*"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarFerPra/synapse.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarFerPra/synapse/issues"
+  },
+  "homepage": "https://github.com/MarFerPra/synapse#readme"
+}

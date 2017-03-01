@@ -1,0 +1,27 @@
+{
+  "name": "synapse-client",
+  "version": "0.0.1",
+  "description": "Synapse client",
+  "main": "client.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "node client.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "socket.io": "*"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarFerPra/synapse.git"
+  },
+  "author": "marcofp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MarFerPra/synapse/issues"
+  },
+  "homepage": "https://github.com/MarFerPra/synapse#readme"
+}
