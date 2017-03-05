@@ -1,28 +1,22 @@
-var express = require("express");
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+"use strict";
+
+const express = require("express");
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
+const chat = require('./app/chat.js')(io);
 
 app.use(express.static('public'));
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
 	res.send('Welcome to synapse');
 });
 
-io.on('connection', function(socket) {
-	console.log("User connected");
-
-	socket.emit('server-msg', { data: "Welcome to Synapse." });
-
-	socket.on('msg', function(content) {
-		io.emit('receive', content);
-	});
-
-	socket.on('disconnect', function(){
-		console.log('User disconnected');
-	});
+io.on('connection', (socket) => {
+	chat.handle_client_connection(socket);
 });
 
-http.listen(9090, function(){
+http.listen(9090, () => {
 	console.log('Server listening to 9090.')
 });

@@ -1,13 +1,15 @@
-var ioClient = require('socket.io-client');
+"use strict";
 
-var serverURL = 'http://localhost:9090';
-var socket = ioClient.connect(serverURL);
+const ioClient = require('socket.io-client');
 
-socket.on('connect', function(){
-	console.log("Connected to server.");
-})
+const serverURL = 'http://localhost:9090';
+const socket = ioClient.connect(serverURL, {query: 'username=marco'} );
 
-socket.on('server-msg', function(response){
+socket.on('connect', () => {
+	console.log("Connection established.");
+});
+
+socket.on('server-msg', (response) => {
 	console.log("Received: ", response.data);
-})
+});
 
