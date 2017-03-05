@@ -1,15 +1,14 @@
 "use strict";
 
-const ioClient = require('socket.io-client');
+const repl = require('repl');
+const io_client = require('socket.io-client');
 
-const serverURL = 'http://localhost:9090';
-const socket = ioClient.connect(serverURL, {query: 'username=marco'} );
+const server_url = 'http://localhost:9090';
 
-socket.on('connect', () => {
-	console.log("Connection established.");
-});
+console.log("Server url: ", server_url);
 
-socket.on('server-msg', (response) => {
-	console.log("Received: ", response.data);
-});
+const chat_client = require('./app/chat_client.js')(io_client, server_url);
 
+chat_client.define_username();
+
+chat_client.connect_to_server();

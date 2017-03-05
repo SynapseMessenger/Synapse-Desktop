@@ -1,4 +1,4 @@
-"user strict";
+"use strict";
 
 module.exports = (io) => {
 
@@ -11,7 +11,8 @@ module.exports = (io) => {
     socket.emit('server-msg', { data: "Welcome to Synapse, " + username + "."});
 
     socket.on('msg', (content) => {
-      io.emit('receive', content);
+      //console.log('content: ', content);
+      socket.emit('server-msg', content);
     });
 
     socket.on('disconnect', () => {

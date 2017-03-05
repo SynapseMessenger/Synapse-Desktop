@@ -5,7 +5,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const chat = require('./app/chat.js')(io);
+const chat_server = require('./app/chat_server.js')(io);
 
 app.use(express.static('public'));
 
@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-	chat.handle_client_connection(socket);
+	chat_server.handle_client_connection(socket);
 });
 
 http.listen(9090, () => {
