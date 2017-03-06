@@ -14,7 +14,12 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-	chat_server.handle_client_connection(socket);
+  let username = socket.handshake.query.username;
+  if(username){
+    chat_server.handle_client_connection(socket, username);
+  } else {
+    socket.disconnect(0);
+  }
 });
 
 http.listen(9090, () => {

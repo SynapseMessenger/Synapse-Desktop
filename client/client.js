@@ -1,6 +1,5 @@
 "use strict";
 
-const repl = require('repl');
 const io_client = require('socket.io-client');
 
 const server_url = 'http://localhost:9090';

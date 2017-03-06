@@ -2,19 +2,16 @@
 
 module.exports = (io) => {
 
-  module.handle_client_connection = function(socket) {
-
-    let username = socket.handshake.query.username
+  module.handle_client_connection = function(socket, username) {
 
     console.log( "<" + username + "> entered the chat.");
 
-    socket.emit('server-msg', { data: "Welcome to Synapse, " + username + "."});
+    socket.emit('welcome-msg', { data: "Welcome to Synapse, " + username + "."});
 
-    socket.on('msg', (content) => {
-      //console.log('content: ', content);
-      socket.emit('server-msg', content);
+    socket.on('client-msg', (client_message) => {
+      socket.broadcast.emit('client-msg', client_message);
     });
-
+ 
     socket.on('disconnect', () => {
       console.log('User disconnected');
     });
