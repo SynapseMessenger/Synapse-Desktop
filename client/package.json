@@ -2,10 +2,10 @@
   "name": "synapse-client",
   "version": "0.0.1",
   "description": "Synapse client",
-  "main": "client.js",
+  "main": "app.js",
   "scripts": {
     "test": "npm test",
-    "start": "node client.js"
+    "start": "node app.js"
   },
   "directories": {
     "test": "test"

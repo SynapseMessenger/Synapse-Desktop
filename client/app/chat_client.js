@@ -1,64 +1,63 @@
 "use strict";
 
-const readlineSync = require('readline-sync');
 const readline = require('readline');
 
-let username = "";
+module.exports = class ChatClient {
+  constructor(username, serverUrl, port){
+    this.username = username || "anonymous";
+    this.serverUrl = serverUrl || "http://localhost:9090";
+    if(!serverUrl && port) this.serverUrl = "http://localhost:" + port;
 
-module.exports = (io_client, server_url) => {
+    this.io = require('socket.io-client');
+  }
 
-  module.define_username = function() {
-    do {
-      username = readlineSync.question("Define username: ");
-    } while (!username);
-  };
+  connect(){
+    console.log("Attempting connection as " + this.username + ", to " + this.serverUrl);
+    this.socket = this.io.connect(this.serverUrl, { query: "username=" + this.username } );
+    this.listenServerEvents();
+  }
 
-  module.connect_to_server = function(){
-    console.log("Attempting connection as ", username);
-
-    const socket = io_client.connect(server_url, { query: "username=" + username } );
-
-    socket.on('connect', () => {
+  listenServerEvents(){
+    this.socket.on('connect', () => {
       console.log("Connection established.");
     });
 
-    socket.on('welcome-msg', (response) => {
+    this.socket.on('welcome-msg', (response) => {
       console.log("<Server>: ", response.data);
-      start_chat(socket);
+      this.startChat();
     });
 
-    socket.on('server-msg', (response) => {
+    this.socket.on('server-msg', (response) => {
       console.log("<Server>: ", response.data);
     });
 
-    socket.on("client-msg", (response) => {
+    this.socket.on("client-msg", (response) => {
       console.log("<" + response.username + ">: " + response.message);
     });
-  };
+  }
 
-  return module;
-};
+  startChat(){
+    console.log("Starting chat, write \".exit\" to stop.");
+    this.readlineInterface = readline.createInterface({
+                                                        input: process.stdin, output: process.stdout
+                                                      });
+    this.showPrompt();
+  }
 
-function start_chat(socket){
-  console.log("Starting chat, write \".exit\" to stop.");
-  let continue_chat = true;
-  const readlineInterface = getReadlineInterface();
-  show_prompt(readlineInterface, socket);
-}
+  showPrompt(){
+    this.readlineInterface.question("$> ", (input) => {
+      switch(input){
+        case ".exit":
+          this.disconnect();
+        break;
+        default:
+          this.socket.emit("client-msg", {username: this.username, message: input});
+          this.showPrompt();
+      }
+    });
+  }
 
-function getReadlineInterface(){
-  return readline.createInterface({ input: process.stdin, output: process.stdout });
-}
-
-function show_prompt(readlineInterface, socket){
-  readlineInterface.question("$> ", (input) => {
-    switch(input){
-      case ".exit":
-        process.exit();
-      break;
-      default:
-        socket.emit("client-msg", {username: username, message: input});
-        show_prompt(readlineInterface, socket);
-    }
-  });
+  disconnect(){
+    process.exit();
+  }
 }
