@@ -1,14 +1,15 @@
 "use strict";
 
 const readline = require('readline');
+const SignalCipher = require('./signal_cipher.js')
 
 module.exports = class ChatClient {
   constructor(username, serverUrl, port){
     this.username = username || "anonymous";
     this.serverUrl = serverUrl || "http://localhost:9090";
     if(!serverUrl && port) this.serverUrl = "http://localhost:" + port;
-
     this.io = require('socket.io-client');
+    this.cipher = new SignalCipher(this.username);
   }
 
   connect(){
@@ -33,6 +34,14 @@ module.exports = class ChatClient {
 
     this.socket.on("client-msg", (response) => {
       console.log("<" + response.username + ">: " + response.message);
+    });
+
+    this.socket.on("establish-session", (sessionData) => {
+      this.cipher.buildSession(sessionData).then(() => {
+        // encrypt messages.
+      }).catch(() => {
+        // handle error.
+      });
     });
   }
 
