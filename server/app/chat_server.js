@@ -37,7 +37,7 @@ module.exports = class ChatServer {
     });
  
     socket.on('disconnect', () => {
-      printUserEvent(username, "disconnected")
+      printUserEvent(username, "disconnected");
     });
   }
 }

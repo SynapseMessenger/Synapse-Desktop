@@ -1,45 +1,49 @@
 "use strict";
 
-const libsignal = require('../libs/libsignal-protocol.js')
+const libsignal = require('../libs/libsignal-protocol.js');
+const SignalStore = require('./signal-store.js');
+const KeyHelper = libsignal.KeyHelper;
 
 module.exports = class SignalCipher {
   constructor(){
+    this.signalStore = new SignalStore();
     this.generateInitialKeys();
   }
 
   generateInitialKeys(){
-    const KeyHelper = libsignal.KeyHelper;
 
-    this.signalKeyStore = new MySignalProtocolStore();
-
-    this.registrationId = KeyHelper.generateRegistrationId();
+    let registrationId = KeyHelper.generateRegistrationId();
+    this.signalStore.put('registrationId', registrationId);
 
     KeyHelper.generateIdentityKeyPair().then((identityKeyPair) => {
       this.identityKeyPair = identityKeyPair;
+      this.signalStore.put('identityKey', identityKeyPair);
     });
 
-    KeyHelper.generatePreKey(keyId).then((preKey) => { // keyId ?
-      this.preKey = preKey;
+    this.keyId = 1337;
+
+    KeyHelper.generatePreKey(this.keyId).then((preKey) => {
+      this.signalStore.storePreKey(preKey.keyId, preKey.keyPair);
     });
 
-    KeyHelper.generateSignedPreKey(identityKeyPair, keyId)
+    KeyHelper.generateSignedPreKey(identityKeyPair, this.keyId)
     .then((signedPreKey) => {
-      this.signedPreKey = signedPreKey;
+      this.signalStore.storeSignedPreKey(signedPreKey.keyId, signedPreKey.keyPair);
     });
   }
 
   buildSession(sessionData){
     return sessionBuilder.processPreKey({
-        registrationId: this.registrationId,
-        identityKey: this.identityKey.pubKey,
+        registrationId: this.signalStore.get('registrationId'),
+        identityKey: this.signalStore.get('identityKey').pubKey,
         signedPreKey: {
-            keyId     : this.signedPreKey.keyId,
-            publicKey : this.signedPreKey.keyPair.pubKey,
-            signature : this.signedPreKey.keyPair.privKey // ?
+            keyId     : this.keyId,
+            publicKey : this.signalStore.loadSignedPreKey(this.keyId).pubKey,
+            signature : this.signalStore.loadSignedPreKey(this.keyId).privKey
         },
         preKey: {
-            keyId     : this.preKey.keyId,
-            publicKey : this.preKey.keyPair.pubKey
+            keyId     : this.keyId,
+            publicKey : this.signalStore.loadPreKey(this.keyId).pubKey
         }
     });
   }

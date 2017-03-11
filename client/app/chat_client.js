@@ -1,5 +1,7 @@
 "use strict";
 
+const io = require('socket.io-client');
+
 const readline = require('readline');
 const SignalCipher = require('./signal_cipher.js')
 
@@ -8,13 +10,12 @@ module.exports = class ChatClient {
     this.username = username || "anonymous";
     this.serverUrl = serverUrl || "http://localhost:9090";
     if(!serverUrl && port) this.serverUrl = "http://localhost:" + port;
-    this.io = require('socket.io-client');
     this.cipher = new SignalCipher(this.username);
   }
 
   connect(){
     console.log("Attempting connection as " + this.username + ", to " + this.serverUrl);
-    this.socket = this.io.connect(this.serverUrl, { query: "username=" + this.username } );
+    this.socket = io.connect(this.serverUrl, { query: "username=" + this.username } );
     this.listenServerEvents();
   }
 
