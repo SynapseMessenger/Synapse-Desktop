@@ -78,7 +78,6 @@ module.exports = class SignalStore {
     return Promise.resolve(this.remove('25519KeypreKey' + keyId));
   }
 
-  /* Returns a signed keypair object or undefined */
   loadSignedPreKey(keyId) {
     var res = this.get('25519KeysignedKey' + keyId);
     if (res !== undefined) {

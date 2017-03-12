@@ -7,6 +7,8 @@ const KeyHelper = libsignal.KeyHelper;
 module.exports = class SignalCipher {
   constructor(){
     this.signalStore = new SignalStore();
+    this.preKeyId = 1337;
+    this.signedKeyId = 1;
     this.generateInitialKeys();
   }
 
@@ -20,32 +22,30 @@ module.exports = class SignalCipher {
       this.signalStore.put('identityKey', identityKeyPair);
     });
 
-    this.keyId = 1337;
-
-    KeyHelper.generatePreKey(this.keyId).then((preKey) => {
-      this.signalStore.storePreKey(preKey.keyId, preKey.keyPair);
+    KeyHelper.generatePreKey(this.preKeyId).then((preKey) => {
+      this.signalStore.storePreKey(this.preKeyId, preKey.keyPair);
     });
 
-    KeyHelper.generateSignedPreKey(identityKeyPair, this.keyId)
+    KeyHelper.generateSignedPreKey(identityKeyPair, this.signedKeyId)
     .then((signedPreKey) => {
-      this.signalStore.storeSignedPreKey(signedPreKey.keyId, signedPreKey.keyPair);
+      this.signalStore.storeSignedPreKey(this.signedKeyId, signedPreKey.keyPair);
     });
   }
 
-  buildSession(sessionData){
-    return sessionBuilder.processPreKey({
+  getSessionData(){
+    return {
         registrationId: this.signalStore.get('registrationId'),
         identityKey: this.signalStore.get('identityKey').pubKey,
         signedPreKey: {
-            keyId     : this.keyId,
-            publicKey : this.signalStore.loadSignedPreKey(this.keyId).pubKey,
-            signature : this.signalStore.loadSignedPreKey(this.keyId).privKey
+            keyId     : this.signedKeyId,
+            publicKey : this.signalStore.loadSignedPreKey(this.signedKeyId).pubKey,
+            signature : this.signalStore.loadSignedPreKey(this.signedKeyId).signature
         },
         preKey: {
-            keyId     : this.keyId,
-            publicKey : this.signalStore.loadPreKey(this.keyId).pubKey
+            keyId     : this.preKeyId,
+            publicKey : this.signalStore.loadPreKey(this.preKeyId).pubKey
         }
-    });
+    };
   }
 
 }
