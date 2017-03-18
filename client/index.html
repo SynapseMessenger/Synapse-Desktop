@@ -2,6 +2,18 @@
 <html>
   <head>
     <title>Synapse</title>
+    <!-- ***************************************** -->
+    <!-- https://github.com/WhisperSystems/libsignal-protocol-javascript/issues/6 -->
+    <script>
+        window.nodeRequire = require;
+        delete window.require;
+    </script>
+    <script src="libs/libsignal-protocol.js"></script>
+    <script>
+      window.require = window.nodeRequire;
+      delete window.nodeRequire;
+    </script>
+    <!-- ***************************************** -->
     <script>
       require('babel-register');
       require('./app/loader');
