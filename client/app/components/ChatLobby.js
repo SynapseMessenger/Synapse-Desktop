@@ -11,6 +11,7 @@ export default class ChatLobby extends React.Component {
     return (
       <div>
         ChatLobby
+        Hello, {this.props.app.username}!
       </div>
     );
   }
