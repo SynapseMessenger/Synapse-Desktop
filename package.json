@@ -1,7 +1,7 @@
 {
-  "name": "synapse-client",
+  "name": "synapse-desktop",
   "version": "0.0.1",
-  "description": "Synapse client",
+  "description": "Synapse Desktop",
   "main": "main.js",
   "scripts": {
     "test": "npm test",
@@ -21,10 +21,7 @@
     "react-redux": "latest",
     "react-router-dom": "latest",
     "redux": "latest",
-    "socket.io": "*"
-  },
-  "devDependencies": {
-    "babel-preset-es2015": "^6.22.0",
+    "socket.io": "*",
     "electron": "^1.4.3",
     "hammerjs": "^2.0.8"
   },
