@@ -1,60 +1,37 @@
 'use babel';
 
-import React from 'react'
-import { connect } from 'react-redux'
-import { setUsername } from '../actions'
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setUsername } from '../actions';
+import { Link } from 'react-router-dom';
 
-let Login = ({ dispatch }) => {
-  let input
-
-  return (
-    <div>
-      <form onSubmit={ e => {
-        e.preventDefault()
-        if(!input.value.trim()){
-          return
-        }
-        dispatch(setUsername(input.value))
-        input.value = ''
-      }}>
-        <input ref={node => {
-          input = node
-        }} />
-        <button type="submit">
-          Log in
-        </button>
-      </form>
-    </div>
-  )
+class Login extends React.Component {
+  render(){
+    console.log("Username: ", this.props);
+    return (
+      <div>
+           <label>
+             Name:
+             <input type="text" value={this.props.username} onChange={(ev) => this.props.setUsername(ev.target.value)} />
+          </label>
+          <Link to="/lobby">Continue</Link>
+      </div>
+    )
+  }
 }
 
-Login = connect()(Login)
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({
+    setUsername
+  }, dispatch);
+};
 
-export default Login
+const mapStateToProps = (state) => {
+  console.log("State is: ", state);
+  return {
+    username: state.login.username
+  };
+};
 
-// import React from 'react';
-
-// export default class Login extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {username: ''};
-
-//     this.handleChange = this.handleChange.bind(this);
-//   }
-
-//   handleChange(event) {
-//     this.setState({username: event.target.value});
-//   }
-
-//   render() {
-//     return (
-//       <form onSubmit={this.handleSubmit}>
-//         <label>
-//           Name:
-//           <input type="text" value={this.state.username} onChange={this.handleChange} />
-//         </label>
-//         <input type="button" value="Log in" onClick={() => this.props.setUsername(this.state.username)}/>
-//       </form>
-//     );
-//   }
-// }
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

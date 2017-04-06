@@ -1,14 +1,27 @@
 import { combineReducers } from 'redux'
 
-const setUsername = (state = 'anonymous', action) => {
+const defaultState = {
+  username: ''
+};
+
+const login = (state = defaultState, action) => {
   switch (action.type) {
     case 'SET_USERNAME':
-      return action.username
+      state = {
+        username: action.username
+      };
+      break;
     default:
-      return state
+      break;
   }
-}
 
-export default combineReducers({
-  setUsername
-})
+  console.log("In reducer state is: ", state);
+  return state;
+};
+
+const appReducers =  combineReducers({
+  login
+});
+
+
+export default appReducers;

@@ -1,17 +1,14 @@
 import React from 'react'
-import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import { render } from 'react-dom'
 import SynapseApp from './components/SynapseApp'
 import { BrowserRouter as Router, Route, IndexRoute } from 'react-router-dom';
-
-import reducers from './reducers'
 import Login from './components/Login.js'
 import ChatLobby from './components/ChatLobby.js'
 import Conversation from './components/Conversation.js'
 import LandingPage from './components/LandingPage.js';
 
-let store = createStore(reducers)
+import store from './store';
 
 window.onload = function(){
   render(
