@@ -11,11 +11,25 @@ class Login extends React.Component {
     console.log("Username: ", this.props);
     return (
       <div>
-           <label>
-             Name:
-             <input type="text" value={this.props.username} onChange={(ev) => this.props.setUsername(ev.target.value)} />
-          </label>
-          <Link to="/lobby">Continue</Link>
+        <div className="container">
+          <h5 className="center-align">Login</h5>
+          <div className="left-align">
+           <label className="username_label">
+             Username:
+             <input type="text"
+                    value={this.props.username}
+                    onChange={(ev) => this.props.setUsername(ev.target.value)}
+             />
+            </label>
+
+            <div className="center-align">
+              <Link className="waves-effect waves-light btn" to="/lobby">
+                Continue
+              </Link>
+            </div>
+
+          </div>
+        </div>
       </div>
     )
   }
@@ -30,7 +44,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   console.log("State is: ", state);
   return {
-    username: state.login.username
+    username: state.synapse.username
   };
 };
 
