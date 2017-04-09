@@ -1,14 +1,17 @@
 import { combineReducers } from 'redux'
-
+import ChatClient from '../utils/chat_client.js';
 const defaultState = {
-  username: ''
+  username: undefined,
+  serverUrl: undefined,
+  serverPort: undefined
 };
 
 const synapse = (state = defaultState, action) => {
   switch (action.type) {
     case 'SET_USERNAME':
+      const chatClient = new ChatClient(action.username, state.serverUrl, state.serverPort);
       state = {
-        username: action.username
+        chatClient
       };
       break;
     default:

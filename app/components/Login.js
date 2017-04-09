@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
   render(){
-    console.log("Username: ", this.props);
     return (
       <div>
         <div className="container">

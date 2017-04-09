@@ -1,6 +1,6 @@
 "use strict";
 
-const libsignal = require('../libs/libsignal-protocol.js');
+const libsignal = require('../../libs/libsignal-protocol.js');
 const SignalStore = require('./signal-store.js');
 const KeyHelper = libsignal.KeyHelper;
 
