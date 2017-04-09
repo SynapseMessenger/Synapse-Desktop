@@ -30,20 +30,27 @@ module.exports = class ChatClient {
     this.socket.on('connect', () => {
       this.connected = true;
       console.log("Connection established.");
-      this.displayEvent("connected");
+      this.displayEvent({ event: "connected" })
     });
 
-    this.socket.on('welcome-msg', (response) => {
-      console.log("<Server>: ", response.data);
-      this.startChat();
+    this.socket.on('init-connection-msg', (response) => {
+      console.log("Response: ", response);
+      this.displayEvent({ event: "init-connection-msg", data: response });
     });
 
     this.socket.on('server-msg', (response) => {
       console.log("<Server>: ", response.data);
+      this.displayEvent({ event: "server-msg", data: response });
     });
 
     this.socket.on("client-msg", (response) => {
       console.log("<" + response.username + ">: " + response.message);
+      this.displayEvent({ event: "client-msg", data: response });
+    });
+
+    this.socket.on("user-connected", (response) => {
+      console.log("User connected: ", response);
+      this.displayEvent({ event: "user-connected", data: response });
     });
 
     this.socket.on("establish-session", (sessionData) => {
@@ -55,26 +62,11 @@ module.exports = class ChatClient {
     });
   }
 
-  startChat(){
-    console.log("Starting chat, write \".exit\" to stop.");
-    this.readlineInterface = readline.createInterface({
-                                                        input: process.stdin, output: process.stdout
-                                                      });
-    this.showPrompt();
+  sendMessage(receiver, content){
+    this.socket.emit("client-msg", { username: this.username, receiver, content });
   }
 
-  showPrompt(){
-    this.readlineInterface.question("$> ", (input) => {
-      switch(input){
-        case ".exit":
-          this.disconnect();
-        break;
-        default:
-          this.socket.emit("client-msg", {username: this.username, message: input});
-          this.showPrompt();
-      }
-    });
-  }
+  // this.socket.emit("client-msg", {username: this.username, message: input});
 
   disconnect(){
     process.exit();

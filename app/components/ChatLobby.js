@@ -11,6 +11,11 @@ class ChatLobby extends React.Component {
     this.updateView = this.updateLobby.bind(this);
     this.showGreetings = this.showGreetings.bind(this);
     this.showUsers = this.showUsers.bind(this);
+    this.updateLobby = this.updateLobby.bind(this);
+
+    this.state = {
+      connectedToServer: props.chatClient.connected
+    }
   }
 
   componentDidMount(){
@@ -23,8 +28,12 @@ class ChatLobby extends React.Component {
     this.props.chatClient.connect();
   }
 
-  updateLobby(event){
-    console.log("Update view: ", event);
+  updateLobby(update){
+    if(update.event === "connected"){
+      this.setState({
+        connectedToServer: true
+      });
+    }
   }
 
   showGreetings(){
@@ -46,7 +55,7 @@ class ChatLobby extends React.Component {
 
   render() {
     console.log(this.props);
-    const displayInfo = this.props.chatClient.connected ? this.showUsers() : this.showGreetings();
+    const displayInfo = this.state.connectedToServer ? this.showUsers() : this.showGreetings();
     return (
       <div className="container">
         {displayInfo}
@@ -58,12 +67,11 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    setUsername
+    connectedToServer
   }, dispatch);
 };
 
 const mapStateToProps = (state) => {
-  console.log("State: ")
   return {
     chatClient: state.synapse.chatClient
   };
