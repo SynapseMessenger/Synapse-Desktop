@@ -34,7 +34,6 @@ module.exports = class ChatClient {
     });
 
     this.socket.on('init-connection-msg', (response) => {
-      console.log("Response: ", response);
       this.displayEvent({ event: "init-connection-msg", data: response });
     });
 

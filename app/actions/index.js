@@ -4,3 +4,10 @@ export const setUsername = (username) => {
     username
   }
 };
+
+export const updateOnlineUsers = (onlineUsers) => {
+  return {
+    type: 'UPDATE_ONLINE_USERS',
+    onlineUsers
+  }
+};

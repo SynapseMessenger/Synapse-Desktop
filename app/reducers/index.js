@@ -1,3 +1,5 @@
+'use strict';
+
 import { combineReducers } from 'redux'
 import ChatClient from '../utils/chat_client.js';
 const defaultState = {
@@ -11,7 +13,14 @@ const synapse = (state = defaultState, action) => {
     case 'SET_USERNAME':
       const chatClient = new ChatClient(action.username, state.serverUrl, state.serverPort);
       state = {
+        ...state,
         chatClient
+      };
+      break;
+    case 'UPDATE_ONLINE_USERS':
+      state = {
+        ...state,
+        onlineUsers: action.onlineUsers
       };
       break;
     default:

@@ -41,7 +41,6 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log("State is: ", state);
   return {
     username: state.synapse.username
   };

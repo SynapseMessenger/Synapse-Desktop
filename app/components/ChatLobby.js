@@ -2,20 +2,21 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateOnlineUsers } from '../actions';
 
 class ChatLobby extends React.Component {
 
   constructor(props){
     super(props);
     this.connectToServer = this.connectToServer.bind(this);
-    this.updateView = this.updateLobby.bind(this);
+    this.updateLobby = this.updateLobby.bind(this);
     this.showGreetings = this.showGreetings.bind(this);
     this.showUsers = this.showUsers.bind(this);
-    this.updateLobby = this.updateLobby.bind(this);
 
     this.state = {
       connectedToServer: props.chatClient.connected
-    }
+    };
   }
 
   componentDidMount(){
@@ -24,15 +25,18 @@ class ChatLobby extends React.Component {
   }
 
   connectToServer(){
-    this.props.chatClient.updateView = this.updateView;
+    this.props.chatClient.updateView = this.updateLobby;
     this.props.chatClient.connect();
   }
 
   updateLobby(update){
-    if(update.event === "connected"){
-      this.setState({
-        connectedToServer: true
-      });
+    switch(update.event){
+      case 'connected':
+        this.setState({ connectedToServer: true });
+        break;
+      case 'init-connection-msg':
+        this.props.updateOnlineUsers(update.data.onlineUsers);
+        break;
     }
   }
 
@@ -43,19 +47,27 @@ class ChatLobby extends React.Component {
         Connecting to server...
       </div>
     )
+
   }
 
   showUsers(){
     return(
       <div>
-        Showing users!
+        <ul className="collection with-header user-list">
+          {this.props.onlineUsers.map((user) => {
+            return (
+              <a className="collection-item user-item">
+                <div>{user.username}<span href="#!" className="secondary-content"><i className="material-icons">send</i></span></div>
+              </a>
+            )
+          })}
+        </ul>
       </div>
     )
   }
 
   render() {
-    console.log(this.props);
-    const displayInfo = this.state.connectedToServer ? this.showUsers() : this.showGreetings();
+    const displayInfo = this.state.connectedToServer && this.props.onlineUsers ? this.showUsers() : this.showGreetings();
     return (
       <div className="container">
         {displayInfo}
@@ -67,14 +79,15 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    connectedToServer
+    updateOnlineUsers
   }, dispatch);
 };
 
 const mapStateToProps = (state) => {
   return {
-    chatClient: state.synapse.chatClient
+    chatClient: state.synapse.chatClient,
+    onlineUsers: state.synapse.onlineUsers
   };
 };
 
-export default connect(mapStateToProps, null)(ChatLobby);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatLobby);
