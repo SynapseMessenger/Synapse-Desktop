@@ -18,7 +18,7 @@ window.onload = function(){
             <Route path="/" component={LandingPage} />
             <Route path="/login" component={Login} />
             <Route path="/lobby" component={ChatLobby} />
-            <Route path="/conversation" component={Conversation} />
+            <Route path="/conversation/:userId" component={Conversation} />
           </SynapseApp>
         </Router>
       </Provider>,

@@ -4,6 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateOnlineUsers } from '../actions';
+import { Link } from 'react-router-dom';
 
 class ChatLobby extends React.Component {
 
@@ -34,7 +35,7 @@ class ChatLobby extends React.Component {
       case 'connected':
         this.setState({ connectedToServer: true });
         break;
-      case 'init-connection-msg':
+      case 'init-connection-msg': // Message from server with user list and initial information.
         this.props.updateOnlineUsers(update.data.onlineUsers);
         break;
     }
@@ -55,10 +56,16 @@ class ChatLobby extends React.Component {
       <div>
         <ul className="collection with-header user-list">
           {this.props.onlineUsers.map((user) => {
+            console.log(user);
             return (
-              <a className="collection-item user-item">
-                <div>{user.username}<span href="#!" className="secondary-content"><i className="material-icons">send</i></span></div>
-              </a>
+              <Link to={`/conversation/${user._id}`} className="collection-item user-item">
+                  <div>
+                    {user.username}
+                    <span href="#!" className="secondary-content">
+                      <i className="material-icons">send</i>
+                    </span>
+                  </div>
+              </Link>
             )
           })}
         </ul>
@@ -79,7 +86,8 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    updateOnlineUsers
+    updateOnlineUsers,
+    openChat
   }, dispatch);
 };
 
