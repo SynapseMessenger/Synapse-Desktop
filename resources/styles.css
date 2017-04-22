@@ -2,8 +2,22 @@
     font-size: 1.2rem;
 }
 
-.user-list {
+nav {
+    height: 50px;
+    font-weight: 300;
+    background-color: #26a69a;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
 
+.navbar-title {
+    font-size: 2em !important;
+    height: 50px;
+}
+
+.navbar-backlink {
+    padding-left: 20px;
 }
 
 .user-item {

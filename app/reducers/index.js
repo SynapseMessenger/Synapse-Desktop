@@ -5,7 +5,11 @@ import ChatClient from '../utils/chat_client.js';
 const defaultState = {
   username: undefined,
   serverUrl: undefined,
-  serverPort: undefined
+  serverPort: undefined,
+  navbar: {
+    title: '',
+    backlink: ''
+  }
 };
 
 const synapse = (state = defaultState, action) => {

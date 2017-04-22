@@ -12,7 +12,7 @@ class Conversation extends React.Component {
     console.log(this.props);
     return (
       <div>
-        Conversation
+
       </div>
     );
   }

@@ -1,19 +1,35 @@
 'use babel';
 
 import React from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-export default class NavigationBar extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+class NavigationBar extends React.Component {
   render() {
+    const { backlink, title } = this.props;
+    const isVisible = !!title;
     return (
-      <nav>
-        <div className="nav-wrapper">
-          <a href="#" className="brand-logo right">Logo</a>
+      <nav hidden={!isVisible}>
+        <div href="#" className="brand-logo navbar-title center">
+          {title}
         </div>
+        { backlink ?
+              <Link to={backlink} className="navbar-backlink left">
+                <i className="material-icons">reply</i>
+              </Link>
+          : null
+        }
       </nav>
     );
   }
 }
+
+
+const mapStateToProps = (state) => {
+  return {
+    title: state.synapse.navbar.title,
+    backLink: state.synapse.navbar.backlink
+  };
+};
+
+export default connect(mapStateToProps, null)(NavigationBar);
