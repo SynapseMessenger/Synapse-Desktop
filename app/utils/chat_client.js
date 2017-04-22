@@ -26,6 +26,14 @@ module.exports = class ChatClient {
       this.updateView(event);
   }
 
+  initChat(userId){
+    this.socket.emit('init-chat', { receiverId: userId } )
+  }
+
+  sendMessage(emitterId, receiverId, message){
+    this.socket.emit('chat-msg', { emitterId, receiverId, message })
+  }
+
   listenServerEvents(){
     this.socket.on('connect', () => {
       this.connected = true;

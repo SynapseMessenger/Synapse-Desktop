@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateOnlineUsers } from '../actions';
+import { updateOnlineUsers, updateUser } from '../actions';
 import { Link } from 'react-router-dom';
 
 class ChatLobby extends React.Component {
@@ -21,12 +21,14 @@ class ChatLobby extends React.Component {
   }
 
   componentDidMount(){
-    if(this.props.chatClient && !this.props.chatClient.connected)
-      this.connectToServer();
+    if(this.props.chatClient)
+      this.props.chatClient.updateView = this.updateLobby;
+      if(!this.props.chatClient.connected){
+        this.connectToServer();
+      }
   }
 
   connectToServer(){
-    this.props.chatClient.updateView = this.updateLobby;
     this.props.chatClient.connect();
   }
 
@@ -35,9 +37,10 @@ class ChatLobby extends React.Component {
       case 'connected':
         this.setState({ connectedToServer: true });
         break;
-      case 'init-connection-msg': // Message from server with user list and initial information.
+      case 'init-connection-msg':
         this.props.updateOnlineUsers(update.data.onlineUsers);
-        break;
+        this.props.updateUser(update.data.user);
+      break;
     }
   }
 
@@ -86,7 +89,8 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    updateOnlineUsers
+    updateOnlineUsers,
+    updateUser
   }, dispatch);
 };
 
