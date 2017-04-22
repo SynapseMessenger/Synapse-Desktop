@@ -9,3 +9,17 @@
 .user-item {
     cursor: pointer;
 }
+
+.logo {
+    height: 200px;
+    background-image: url('./logo.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin: 50px;
+}
+
+.welcome-message {
+    font-weight: 300;
+    margin: 50px;
+}

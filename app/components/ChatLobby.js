@@ -86,8 +86,7 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    updateOnlineUsers,
-    openChat
+    updateOnlineUsers
   }, dispatch);
 };
 
