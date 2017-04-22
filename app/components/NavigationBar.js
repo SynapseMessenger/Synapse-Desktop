@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom';
 class NavigationBar extends React.Component {
   render() {
     const { backlink, title } = this.props;
-    const isVisible = !!title;
+    const hasTitle = !!title;
     return (
-      <nav hidden={!isVisible}>
+      <nav hidden={!hasTitle}>
         <div href="#" className="brand-logo navbar-title center">
           {title}
         </div>
