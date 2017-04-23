@@ -14,7 +14,6 @@ const defaultState = {
 };
 
 const synapse = (state = defaultState, action) => {
-  let updatedConversation;
   switch (action.type) {
     case 'SET_USERNAME':
       const chatClient = new ChatClient(action.username, state.serverUrl, state.serverPort);
@@ -103,27 +102,34 @@ const synapse = (state = defaultState, action) => {
       break;
 
     case 'SEND_CHAT_MSG':
-      // Do this properly.
-      updatedConversation = state.conversations[action.userId];
-      updatedConversation.push({text: action.messageText, time: action.messageTime});
+      console.log("Send chat msg");
+      console.log("conversation: ", state.conversations[action.userId]);
+      console.log("action: ", action);
       state = {
         ...state,
         conversations: {
           ...state.conversations,
-          [action.userId]: updatedConversation
+          [action.userId]: [
+           ...state.conversations[action.userId],
+            action.message
+          ]
         }
       };
       break;
 
     case 'RECEIVED_CHAT_MSG':
       // Merge both received/send into one action-reducer ???
-      updatedConversation = state.conversations[action.userId];
-      updatedConversation.push({text: action.message.text, time: action.message.time});
+      console.log("Received chat msg");
+      console.log("conversation: ", state.conversations[action.userId]);
+      console.log("action: ", action);
       state = {
         ...state,
         conversations: {
           ...state.conversations,
-          [action.userId]: updatedConversation
+          [action.userId]: [
+            ...state.conversations[action.userId],
+            action.message
+          ]
         }
       };
       break;

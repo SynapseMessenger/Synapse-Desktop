@@ -30,8 +30,15 @@ module.exports = class ChatClient {
     this.socket.emit('init-chat', { receiverId: userId } )
   }
 
-  sendMessage(emitterId, receiverId, text){
-    this.socket.emit('chat-msg', { emitterId, receiverId, text })
+  acceptChat(emitterId, receiverId){
+    this.socket.emit('accept-chat', {
+      receiverId,
+      emitterId
+    })
+  }
+
+  sendMessage(emitterId, receiverId, message){
+    this.socket.emit('chat-msg', { emitterId, receiverId, message })
   }
 
   listenServerEvents(){
@@ -45,14 +52,25 @@ module.exports = class ChatClient {
       this.displayEvent({ event: "init-connection-msg", data: response });
     });
 
-    this.socket.on('server-msg', (response) => {
-      console.log("<Server>: ", response.data);
-      this.displayEvent({ event: "server-msg", data: response });
+    this.socket.on('init-chat', (data) => {
+      this.displayEvent({
+        event: 'init-chat',
+        data
+      });
     });
 
-    this.socket.on("client-msg", (response) => {
-      console.log("<" + response.username + ">: " + response.message);
-      this.displayEvent({ event: "client-msg", data: response });
+    this.socket.on('accept-chat', (data) => {
+      this.displayEvent({
+        event: 'accept-chat',
+        data
+      });
+    });
+
+    this.socket.on('chat-msg', (data) => {
+      this.displayEvent({
+        event: 'chat-msg',
+        data
+      });
     });
 
     this.socket.on("user-connected", (response) => {
