@@ -12,9 +12,9 @@ export const updateOnlineUsers = (onlineUsers) => {
   }
 };
 
-export const updateUser = (user) => {
+export const setUser = (user) => {
   return {
-    type: 'UPDATE_USER',
+    type: 'SET_USER',
     user
   }
 };

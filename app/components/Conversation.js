@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { updateNavbar,
          sendInitChat,
          sendAcceptChat,
@@ -11,12 +12,12 @@ import { updateNavbar,
 class Conversation extends React.Component {
   constructor(props) {
     super(props);
-    props.updateNavbar(receiver.username, '/lobby');
+    props.updateNavbar(props.receiver.username, '/lobby');
     this.updateConversation = this.updateConversation.bind(this);
     props.chatClient.updateView = this.updateConversation;
 
-    if(props.conversation.length === 0){
-      props.initChat(emitter._id);
+    if(!props.conversation || props.conversation.length === 0){
+      props.chatClient.initChat(props.emitter._id);
     }
   }
 
@@ -40,13 +41,28 @@ class Conversation extends React.Component {
     console.log(this.props);
     return (
       <div>
-
+        <div className="conversation">
+        </div>
+        <div className="row">
+          <div className="col s10">
+            <div className="row">
+              <div className="input-field col s12">
+                <i className="material-icons prefix">textsms</i>
+                <textarea id="icon_prefix2" className="materialize-textarea"></textarea>
+              </div>
+            </div>
+          </div>
+          <div className="col s2">
+            <i className="material-icons prefix">send</i>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
+  console.log("State is: ", state);
   const receiverId = ownProps.match.params.userId;
   const users = state.synapse.onlineUsers;
   return {

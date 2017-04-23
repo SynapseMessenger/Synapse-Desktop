@@ -3,9 +3,6 @@
 import { combineReducers } from 'redux'
 import ChatClient from '../utils/chat_client.js';
 const defaultState = {
-  username: undefined,
-  serverUrl: undefined,
-  serverPort: undefined,
   onlineUsers: undefined,
   waitingInitChatAnswer: undefined,
   user: undefined,
@@ -17,6 +14,7 @@ const defaultState = {
 };
 
 const synapse = (state = defaultState, action) => {
+  let updatedConversation;
   switch (action.type) {
     case 'SET_USERNAME':
       const chatClient = new ChatClient(action.username, state.serverUrl, state.serverPort);
@@ -106,7 +104,7 @@ const synapse = (state = defaultState, action) => {
 
     case 'SEND_CHAT_MSG':
       // Do this properly.
-      const updatedConversation = state.conversations[action.userId];
+      updatedConversation = state.conversations[action.userId];
       updatedConversation.push({text: action.messageText, time: action.messageTime});
       state = {
         ...state,
@@ -119,7 +117,7 @@ const synapse = (state = defaultState, action) => {
 
     case 'RECEIVED_CHAT_MSG':
       // Merge both received/send into one action-reducer ???
-      const updatedConversation = state.conversations[action.userId];
+      updatedConversation = state.conversations[action.userId];
       updatedConversation.push({text: action.message.text, time: action.message.time});
       state = {
         ...state,

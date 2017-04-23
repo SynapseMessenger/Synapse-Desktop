@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateOnlineUsers, updateUser } from '../actions';
+import { updateOnlineUsers, setUser } from '../actions';
 import { Link } from 'react-router-dom';
 
 class ChatLobby extends React.Component {
@@ -39,7 +39,7 @@ class ChatLobby extends React.Component {
         break;
       case 'init-connection-msg':
         this.props.updateOnlineUsers(update.data.onlineUsers);
-        this.props.updateUser(update.data.user);
+        this.props.setUser(update.data.user);
       break;
     }
   }
@@ -90,7 +90,7 @@ class ChatLobby extends React.Component {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     updateOnlineUsers,
-    updateUser
+    setUser
   }, dispatch);
 };
 
