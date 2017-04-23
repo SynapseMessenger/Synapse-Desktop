@@ -30,8 +30,8 @@ module.exports = class ChatClient {
     this.socket.emit('init-chat', { receiverId: userId } )
   }
 
-  sendMessage(emitterId, receiverId, message){
-    this.socket.emit('chat-msg', { emitterId, receiverId, message })
+  sendMessage(emitterId, receiverId, text){
+    this.socket.emit('chat-msg', { emitterId, receiverId, text })
   }
 
   listenServerEvents(){
@@ -69,13 +69,7 @@ module.exports = class ChatClient {
     });
   }
 
-  sendMessage(receiver, content){
-    this.socket.emit("client-msg", { username: this.username, receiver, content });
-  }
-
-  // this.socket.emit("client-msg", {username: this.username, message: input});
-
   disconnect(){
     process.exit();
   }
-}
+};

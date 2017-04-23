@@ -14,11 +14,16 @@ class Conversation extends React.Component {
     super(props);
     props.updateNavbar(props.receiver.username, '/lobby');
     this.updateConversation = this.updateConversation.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
     props.chatClient.updateView = this.updateConversation;
 
     if(!props.conversation || props.conversation.length === 0){
       props.chatClient.initChat(props.emitter._id);
     }
+
+    this.state = {
+      message: ''
+    };
   }
 
   updateConversation(update){
@@ -37,23 +42,34 @@ class Conversation extends React.Component {
     }
   }
 
+  sendMessage() {
+    const { emitter, receiver } = this.props;
+    this.props.chatClient.sendMessage(emitter._id, receiver._id, this.state.message);
+    this.setState({
+      message: ""
+    });
+  }
+
   render() {
-    console.log(this.props);
     return (
-      <div>
+      <div className="container">
         <div className="conversation">
         </div>
-        <div className="row">
+        <div className="row input-message-wrapper">
           <div className="col s10">
-            <div className="row">
-              <div className="input-field col s12">
-                <i className="material-icons prefix">textsms</i>
-                <textarea id="icon_prefix2" className="materialize-textarea"></textarea>
-              </div>
-            </div>
+            <textarea
+              className="materialize-textarea input-message"
+              rows="5"
+              cols="50"
+              value={this.state.message}
+              onChange={(ev) => { this.setState({message: ev.target.value})} }
+            >
+            </textarea>
           </div>
-          <div className="col s2">
-            <i className="material-icons prefix">send</i>
+          <div className="col s2" onClick={this.sendMessage}>
+            <a className="btn-floating waves-effect waves-light">
+              <i className="material-icons">send</i>
+            </a>
           </div>
         </div>
       </div>
