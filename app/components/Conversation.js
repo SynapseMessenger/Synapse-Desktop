@@ -52,7 +52,11 @@ class Conversation extends React.Component {
 
   sendMessage() {
     const { emitter, receiver } = this.props;
-    const message = {text: this.state.message, time: Date.now()};
+    const message = {
+      text: this.state.message,
+      time: Date.now(),
+      userId: emitter._id
+    };
     this.props.chatClient.sendMessage(emitter._id, receiver._id, message);
     this.props.sendChatMessage(this.props.emitter._id, message);
     this.setState({
@@ -67,7 +71,7 @@ class Conversation extends React.Component {
         <div className="conversation">
           {this.props.conversation.map((message) => {
             return (
-              <div>{message.text} : {message.time}</div>
+              <div>{message.text} : {message.time} : {message.userId}</div>
             );
           })}
         </div>
