@@ -49,3 +49,24 @@ nav {
     font-weight: 300;
     margin: 50px;
 }
+
+.conversation {
+    padding: 15px 0 15px 0;
+}
+
+.conversation-message {
+    margin: 10px 0 10px 0;
+    padding: 5px;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+}
+
+.other-user {
+    float: left;
+    background-color: #80deea;
+}
+
+.own-user {
+    float: right;
+    background-color: #80cbc4;
+}

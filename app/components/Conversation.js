@@ -70,8 +70,11 @@ class Conversation extends React.Component {
       return (
         <div className="conversation">
           {this.props.conversation.map((message) => {
+            const messageOwnerClass = message.userId === this.props.emitter._id ? "own-user" : "other-user";
             return (
-              <div>{message.text} : {message.time} : {message.userId}</div>
+              <div className={"conversation-message " + messageOwnerClass}>
+                {message.text} : {message.time} : {message.userId}
+              </div>
             );
           })}
         </div>
