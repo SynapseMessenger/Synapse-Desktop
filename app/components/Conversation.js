@@ -6,8 +6,7 @@ import { bindActionCreators } from 'redux';
 import { updateNavbar,
          sendInitChat,
          sendAcceptChat,
-         sendChatMessage,
-         receivedChatMessage,
+         addMessageToChat,
          receivedAcceptChat
         } from '../actions';
 
@@ -33,17 +32,18 @@ class Conversation extends React.Component {
     const { emitter, receiver } = this.props;
     switch(update.event){
       case 'init-chat':
-        console.log("init chat update conversation!", update);
+        console.log("init chat update conversation: ", update);
         this.props.chatClient.acceptChat(emitter._id, receiver._id);
         this.props.sendAcceptChat(receiver._id);
         break;
       case 'accept-chat':
-        console.log("accept chat update conversation!", update);
+        console.log("accept chat update conversation: ", update);
         this.props.receivedAcceptChat(emitter._id);
         break;
       case 'chat-msg':
-        console.log("chat message update!", update);
-        this.props.receivedChatMessage(update.data.emitterId, update.data.message);
+        const { message } = update.data;
+        console.log("chat message update: ", update);
+        this.props.addMessageToChat(message, message.emitterId);
         break;
       default:
         break;
@@ -55,31 +55,33 @@ class Conversation extends React.Component {
     const message = {
       text: this.state.message,
       time: Date.now(),
-      userId: emitter._id
+      emitterId: emitter._id,
+      receiverId: receiver._id
     };
-    this.props.chatClient.sendMessage(emitter._id, receiver._id, message);
-    this.props.sendChatMessage(this.props.emitter._id, message);
+    this.props.chatClient.sendMessage(message);
+    this.props.addMessageToChat(message, message.receiverId);
     this.setState({
       message: ""
     });
   }
 
   displayConversation(){
-    if(this.props.conversation && this.props.conversation.length > 0){
-      console.log("Displaying conversation.");
+    const hasAConversation = (this.props.conversation && this.props.conversation.length > 0);
+    if(hasAConversation){
       return (
         <div className="conversation">
           {this.props.conversation.map((message) => {
             const messageOwnerClass = message.userId === this.props.emitter._id ? "own-user" : "other-user";
             return (
-              <div className={"conversation-message " + messageOwnerClass}>
-                {message.text} : {message.time} : {message.userId}
+              <div className="col s12">
+                <div className={"conversation-message " + messageOwnerClass}>
+                  {message.text} : {message.time} : {message.userId}
+                </div>
               </div>
             );
           })}
         </div>
       )
-
     } else {
       return null;
     }
@@ -132,8 +134,7 @@ const mapDispatchToProps = (dispatch) => {
     updateNavbar,
     sendInitChat,
     sendAcceptChat,
-    sendChatMessage,
-    receivedChatMessage,
+    addMessageToChat,
     receivedAcceptChat
   }, dispatch);
 };

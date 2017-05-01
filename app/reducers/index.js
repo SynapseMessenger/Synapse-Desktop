@@ -58,12 +58,13 @@ const synapse = (state = defaultState, action) => {
       break;
 
     case 'SET_NAVBAR':
+      const { title, backlink } = action;
       state = {
         ...state,
         navbar: {
           ...state.navbar,
-          backlink: action.backlink,
-          title: action.title
+          backlink,
+          title
         }
       };
       break;
@@ -101,27 +102,8 @@ const synapse = (state = defaultState, action) => {
       };
       break;
 
-    case 'SEND_CHAT_MSG':
-      console.log("Send chat msg");
-      console.log("conversation: ", state.conversations[action.userId]);
-      console.log("action: ", action);
-      state = {
-        ...state,
-        conversations: {
-          ...state.conversations,
-          [action.userId]: [
-           ...state.conversations[action.userId],
-            action.message
-          ]
-        }
-      };
-      break;
-
-    case 'RECEIVED_CHAT_MSG':
-      // Merge both received/send into one action-reducer ???
-      console.log("Received chat msg");
-      console.log("conversation: ", state.conversations[action.userId]);
-      console.log("action: ", action);
+    /* userId is with whom the Client's user has a conversation with. */
+    case 'ADD_MSG_TO_CHAT':
       state = {
         ...state,
         conversations: {

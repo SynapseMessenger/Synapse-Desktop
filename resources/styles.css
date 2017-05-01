@@ -52,6 +52,9 @@ nav {
 
 .conversation {
     padding: 15px 0 15px 0;
+    margin-top: 15px;
+    max-height: 65vh;
+    overflow: auto;
 }
 
 .conversation-message {

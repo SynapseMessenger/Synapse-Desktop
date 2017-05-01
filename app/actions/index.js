@@ -68,17 +68,10 @@ export const receivedAcceptChat = (userId) => {
   }
 };
 
-export const sendChatMessage = (userId, message) => {
+export const addMessageToChat = (message, userId) => {
+  console.log("Add message to chat!", message);
   return {
-    type: 'SEND_CHAT_MSG',
-    userId,
-    message
-  }
-};
-
-export const receivedChatMessage = (userId, message) => {
-  return {
-    type: 'RECEIVED_CHAT_MSG',
+    type: 'ADD_MSG_TO_CHAT',
     userId,
     message
   }

@@ -37,8 +37,8 @@ module.exports = class ChatClient {
     })
   }
 
-  sendMessage(emitterId, receiverId, message){
-    this.socket.emit('chat-msg', { emitterId, receiverId, message })
+  sendMessage(message){
+    this.socket.emit('chat-msg', { message })
   }
 
   listenServerEvents(){
