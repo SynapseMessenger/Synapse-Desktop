@@ -34,7 +34,7 @@ nav {
 
 .user-list {
     overflow: auto;
-    max-height: 40vh;
+    max-height: 35vh;
 }
 
 .lobby-title {
