@@ -55,12 +55,14 @@ class ChatLobby extends React.Component {
   }
 
   showUsers(){
+    const onlineCount = this.props.onlineUsers.length;
+    const offlineCount = this.props.offlineUsers.length;
     return(
       <div>
         <h4 className="center-align lobby-title">Lobby</h4>
 
-        <h6 className="left-align">Online: </h6>
-        <ul className="collection with-header user-list">
+        <h6 className="left-align">Online: ({onlineCount})</h6>
+        <ul className="collection with-header user-list" hidden={onlineCount === 0}>
           {this.props.onlineUsers.map((user) => {
             return (
               <Link to={`/conversation/${user._id}`} className="collection-item user-item">
@@ -75,8 +77,8 @@ class ChatLobby extends React.Component {
           })}
         </ul>
 
-        <h6 className="left-align">Offline: </h6>
-        <ul className="collection with-header user-list">
+        <h6 className="left-align">Offline: ({offlineCount})</h6>
+        <ul className="collection with-header user-list" hidden={offlineCount === 0}>
           {this.props.offlineUsers.map((user) => {
             return (
               <Link to={`/conversation/${user._id}`} className="collection-item user-item">
