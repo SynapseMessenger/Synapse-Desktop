@@ -12,6 +12,13 @@ export const updateUserLists = (allUsers) => {
   }
 };
 
+export const addPendingMessages = (pendingMessages) => {
+  return {
+    type: 'ADD_PENDING_MESSAGES',
+    pendingMessages
+  }
+};
+
 export const setUser = (user) => {
   return {
     type: 'SET_USER',

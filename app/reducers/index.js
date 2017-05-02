@@ -126,6 +126,33 @@ const synapse = (state = defaultState, action) => {
       };
       break;
 
+      // TODO: Improve ???
+    case 'ADD_PENDING_MESSAGES':
+
+      let updatedConversations = {};
+
+      action.pendingMessages.forEach((message) => {
+        if(updatedConversations[message.emitterId]){
+          updatedConversations[message.emitterId].push(message);
+        } else {
+          if(state.conversations[message.emitterId]){
+            updatedConversations[message.emitterId] = state.conversations[message.emitterId].concat([message]);
+          } else {
+            updatedConversations[message.emitterId] = [message];
+          }
+        }
+      });
+
+      state = {
+        ...state,
+        conversations: {
+          ...state.conversations,
+          ...updatedConversations
+        }
+      };
+
+      break;
+
     default:
       break;
   }

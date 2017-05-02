@@ -16,7 +16,6 @@ module.exports = class ChatClient {
   }
 
   connect(){
-    console.log("Attempting connection as " + this.username + ", to " + this.serverUrl);
     this.socket = io.connect(this.serverUrl, { query: "username=" + this.username } );
     this.listenServerEvents();
   }
@@ -44,7 +43,6 @@ module.exports = class ChatClient {
   listenServerEvents(){
     this.socket.on('connect', () => {
       this.connected = true;
-      console.log("Connection established.");
       this.displayEvent({ event: "connected" })
     });
 
@@ -74,7 +72,6 @@ module.exports = class ChatClient {
     });
 
     this.socket.on("user-connected", (response) => {
-      console.log("User connected: ", response);
       this.displayEvent({ event: "user-connected", data: response });
     });
 
