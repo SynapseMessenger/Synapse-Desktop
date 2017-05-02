@@ -30,10 +30,20 @@ const synapse = (state = defaultState, action) => {
       };
       break;
 
-    case 'UPDATE_ONLINE_USERS':
+      // TODO: Add list for already started conversations.
+      // TODO 2.0: Use objects {userId: user} and optimize this operation.
+    case 'UPDATE_USER_LIST':
+      let onlineUsers = [];
+      let offlineUsers = [];
+
+      action.allUsers.map((user) => {
+        user.online ? onlineUsers.push(user) : offlineUsers.push(user);
+      });
+
       state = {
         ...state,
-        onlineUsers: action.onlineUsers
+        onlineUsers,
+        offlineUsers
       };
       break;
 

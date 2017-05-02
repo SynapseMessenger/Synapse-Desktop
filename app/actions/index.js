@@ -5,10 +5,10 @@ export const setUsername = (username) => {
   }
 };
 
-export const updateOnlineUsers = (onlineUsers) => {
+export const updateUserLists = (allUsers) => {
   return {
-    type: 'UPDATE_ONLINE_USERS',
-    onlineUsers
+    type: 'UPDATE_USER_LIST',
+    allUsers
   }
 };
 
@@ -69,7 +69,6 @@ export const receivedAcceptChat = (userId) => {
 };
 
 export const addMessageToChat = (message, userId) => {
-  console.log("Add message to chat!", message);
   return {
     type: 'ADD_MSG_TO_CHAT',
     userId,

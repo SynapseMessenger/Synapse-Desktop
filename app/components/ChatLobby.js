@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateOnlineUsers, setUser } from '../actions';
+import { updateUserLists, setUser } from '../actions';
 import { Link } from 'react-router-dom';
 
 class ChatLobby extends React.Component {
@@ -38,7 +38,7 @@ class ChatLobby extends React.Component {
         this.setState({ connectedToServer: true });
         break;
       case 'init-connection-msg':
-        this.props.updateOnlineUsers(update.data.onlineUsers);
+        this.props.updateUserLists(update.data.allUsers);
         this.props.setUser(update.data.user);
       break;
     }
@@ -57,9 +57,11 @@ class ChatLobby extends React.Component {
   showUsers(){
     return(
       <div>
+        <h4 className="center-align lobby-title">Lobby</h4>
+
+        <h6 className="left-align">Online: </h6>
         <ul className="collection with-header user-list">
           {this.props.onlineUsers.map((user) => {
-            console.log(user);
             return (
               <Link to={`/conversation/${user._id}`} className="collection-item user-item">
                   <div>
@@ -68,6 +70,22 @@ class ChatLobby extends React.Component {
                       <i className="material-icons">send</i>
                     </span>
                   </div>
+              </Link>
+            )
+          })}
+        </ul>
+
+        <h6 className="left-align">Offline: </h6>
+        <ul className="collection with-header user-list">
+          {this.props.offlineUsers.map((user) => {
+            return (
+              <Link to={`/conversation/${user._id}`} className="collection-item user-item">
+                <div>
+                  {user.username}
+                  <span href="#!" className="secondary-content">
+                      <i className="material-icons">send</i>
+                    </span>
+                </div>
               </Link>
             )
           })}
@@ -89,15 +107,21 @@ class ChatLobby extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    updateOnlineUsers,
+    updateUserLists,
     setUser
   }, dispatch);
 };
 
 const mapStateToProps = (state) => {
+  const {
+    chatClient,
+    onlineUsers,
+    offlineUsers
+  } = state.synapse;
   return {
-    chatClient: state.synapse.chatClient,
-    onlineUsers: state.synapse.onlineUsers
+    chatClient,
+    onlineUsers,
+    offlineUsers
   };
 };
 

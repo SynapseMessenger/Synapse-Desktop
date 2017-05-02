@@ -32,6 +32,16 @@ nav {
     padding-left: 20px;
 }
 
+.user-list {
+    overflow: auto;
+    max-height: 40vh;
+}
+
+.lobby-title {
+    margin-top: 25px;
+    font-weight: 300;
+}
+
 .user-item {
     cursor: pointer;
 }

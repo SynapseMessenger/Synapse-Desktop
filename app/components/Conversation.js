@@ -120,9 +120,10 @@ class Conversation extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const receiverId = ownProps.match.params.userId;
-  const users = state.synapse.onlineUsers;
+  const { onlineUsers, offlineUsers } = state.synapse;
+  const allUsers = onlineUsers.concat(offlineUsers);
   return {
-    receiver: users.find((user) => user._id === receiverId),
+    receiver: allUsers.find((user) => user._id === receiverId),
     emitter: state.synapse.user,
     chatClient: state.synapse.chatClient,
     conversation: state.synapse.conversations[receiverId]
