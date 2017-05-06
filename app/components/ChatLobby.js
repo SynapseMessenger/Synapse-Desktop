@@ -3,7 +3,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateUserLists, setUser, addPendingMessages } from '../actions';
+import { addPendingMessages } from '../actions/conversationsActions';
+import { updateUserLists } from '../actions/chatActions';
+import { setUser } from '../actions/userActions';
 import { Link } from 'react-router-dom';
 
 class ChatLobby extends React.Component {

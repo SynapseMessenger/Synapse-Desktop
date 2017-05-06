@@ -3,12 +3,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { updateNavbar,
-         sendInitChat,
-         sendAcceptChat,
-         addMessageToChat,
-         receivedAcceptChat
-        } from '../actions';
+
+import { updateNavbar } from '../actions/navbarActions';
+import { sendInitChat } from '../actions/chatActions';
+import { addMessageToChat, receivedAcceptChat, sendAcceptChat } from '../actions/conversationsActions';
 
 class Conversation extends React.Component {
   constructor(props) {
@@ -32,17 +30,14 @@ class Conversation extends React.Component {
     const { emitter, receiver } = this.props;
     switch(update.event){
       case 'init-chat':
-        console.log("init chat update conversation: ", update);
         this.props.chatClient.acceptChat(emitter._id, receiver._id);
         this.props.sendAcceptChat(receiver._id);
         break;
       case 'accept-chat':
-        console.log("accept chat update conversation: ", update);
         this.props.receivedAcceptChat(emitter._id);
         break;
       case 'chat-msg':
         const { message } = update.data;
-        console.log("chat message update: ", update);
         this.props.addMessageToChat(message, message.emitterId);
         break;
       default:

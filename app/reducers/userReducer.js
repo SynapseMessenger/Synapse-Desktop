@@ -3,7 +3,7 @@ const userReducer = (state = {}, action) => {
     case 'SET_USER':
       state = {
         ...state,
-        user: action.user
+        ...action.user
       };
       break;
     default:

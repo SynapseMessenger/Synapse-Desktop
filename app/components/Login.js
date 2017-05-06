@@ -3,7 +3,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setUsername } from '../actions';
+import { setUsername } from '../actions/chatActions';
 import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
