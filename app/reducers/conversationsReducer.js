@@ -1,3 +1,11 @@
+/* **************************************************************
+ *                  Synapse - Desktop Client
+ * @author Marco Fernandez Pranno <mfernandezpranno@gmail.com>
+ * @licence MIT
+ * @link https://github.com/SynapseNetwork/Synapse-Desktop
+ * @version 1.0
+ * ************************************************************** */
+
 const conversationsReducer = (state = {}, action) => {
   switch (action.type) {
     case 'SEND_ACCEPT_CHAT':
