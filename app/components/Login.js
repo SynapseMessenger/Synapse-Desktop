@@ -42,7 +42,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    username: state.synapse.username
+    username: state.chat.username
   };
 };
 

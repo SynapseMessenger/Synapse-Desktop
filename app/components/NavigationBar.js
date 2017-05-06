@@ -26,10 +26,7 @@ class NavigationBar extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  return {
-    title: state.synapse.navbar.title,
-    backLink: state.synapse.navbar.backlink
-  };
+  return state.navbar;
 };
 
 export default connect(mapStateToProps, null)(NavigationBar);

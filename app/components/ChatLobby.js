@@ -119,12 +119,12 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   const {
-    chatClient,
+    client,
     onlineUsers,
     offlineUsers
-  } = state.synapse;
+  } = state.chat;
   return {
-    chatClient,
+    chatClient: client,
     onlineUsers,
     offlineUsers
   };
