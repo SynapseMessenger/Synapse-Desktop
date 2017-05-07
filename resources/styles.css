@@ -74,12 +74,30 @@ nav {
     border-radius: 4px;
 }
 
-.other-user {
-    float: left;
-    background-color: #80deea;
+.other-user-message-wrapper {
+    float: left !important;
 }
 
-.own-user {
-    float: right;
-    background-color: #80cbc4;
+.other-user-message {
+  background-color: #80deea;
+  float: left;
+}
+
+.own-user-message-wrapper {
+    float: right !important;
+}
+
+.own-user-message {
+  background-color: #80cbc4;
+  float: right;
+}
+
+.message-time {
+  float: right;
+  margin: 5px 5px 0 5px;
+  font-size: 0.7em;
+}
+
+.message-text {
+  width: 100%;
 }

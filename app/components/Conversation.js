@@ -8,22 +8,22 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
+import Message from './Message';
 
 const Conversation = (props) => {
-  const { messages, emitter } = props;
+  const { messages, user } = props;
   if (messages && messages.length > 0) {
     return (
       <div className="row">
         <div className="col s12">
           <div className="conversation">
             { messages.map((message) => {
-              const messageOwnerClass = message.userId === emitter._id ? "own-user" : "other-user";
               return (
-                <div className="col s12">
-                  <div className={"conversation-message " + messageOwnerClass}>
-                    {message.text} : {message.time} : {message.userId}
-                  </div>
-                </div>
+                <Message
+                  text={message.text}
+                  time={message.time}
+                  isOwn={message.emitterId === user._id}
+                />
               );
             })}
           </div>
@@ -35,7 +35,7 @@ const Conversation = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    emitter: state.user,
+    user: state.user,
     messages: state.conversations[ownProps.receiverId]
   };
 };
