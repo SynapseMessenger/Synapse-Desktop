@@ -12,8 +12,8 @@ import { render } from 'react-dom'
 import SynapseApp from './components/SynapseApp'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import Login from './components/Login.js'
-import ChatLobby from './components/ChatLobby.js'
-import Conversation from './components/Conversation.js'
+import Contacts from './components/Contacts.js'
+import Chat from './components/Chat.js'
 import LandingPage from './components/LandingPage.js';
 
 import store from './store';
@@ -26,8 +26,8 @@ window.onload = function(){
             <Route path="/" render={() => <Redirect to="/landing_page" />} />
             <Route path="/landing_page" component={LandingPage} />
             <Route path="/login" component={Login} />
-            <Route path="/lobby" component={ChatLobby} />
-            <Route path="/conversation/:userId" component={Conversation} />
+            <Route path="/contacts" component={Contacts} />
+            <Route path="/chat/:userId" component={Chat} />
           </SynapseApp>
         </Router>
       </Provider>,

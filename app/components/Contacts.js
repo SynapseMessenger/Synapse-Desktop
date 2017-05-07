@@ -16,12 +16,12 @@ import { updateUserLists } from '../actions/chatActions';
 import { setUser } from '../actions/userActions';
 import { Link } from 'react-router-dom';
 
-class ChatLobby extends React.Component {
+class Contacts extends React.Component {
 
   constructor(props){
     super(props);
     this.connectToServer = this.connectToServer.bind(this);
-    this.updateLobby = this.updateLobby.bind(this);
+    this.updateContacts = this.updateContacts.bind(this);
     this.showGreetings = this.showGreetings.bind(this);
     this.showUsers = this.showUsers.bind(this);
 
@@ -32,7 +32,7 @@ class ChatLobby extends React.Component {
 
   componentDidMount(){
     if(this.props.chatClient)
-      this.props.chatClient.updateView = this.updateLobby;
+      this.props.chatClient.updateView = this.updateContacts;
       if(!this.props.chatClient.connected){
         this.connectToServer();
       }
@@ -42,7 +42,7 @@ class ChatLobby extends React.Component {
     this.props.chatClient.connect();
   }
 
-  updateLobby(update){
+  updateContacts(update){
     switch(update.event){
       case 'connected':
         this.setState({ connectedToServer: true });
@@ -71,13 +71,13 @@ class ChatLobby extends React.Component {
     const offlineCount = this.props.offlineUsers.length;
     return(
       <div>
-        <h4 className="center-align lobby-title">Lobby</h4>
+        <h4 className="center-align contacts-title">Contacts</h4>
 
         <h6 className="left-align">Online: ({onlineCount})</h6>
         <ul className="collection with-header user-list" hidden={onlineCount === 0}>
           {this.props.onlineUsers.map((user) => {
             return (
-              <Link to={`/conversation/${user._id}`} className="collection-item user-item">
+              <Link to={`/chat/${user._id}`} className="collection-item user-item">
                   <div>
                     {user.username}
                     <span href="#!" className="secondary-content">
@@ -93,7 +93,7 @@ class ChatLobby extends React.Component {
         <ul className="collection with-header user-list" hidden={offlineCount === 0}>
           {this.props.offlineUsers.map((user) => {
             return (
-              <Link to={`/conversation/${user._id}`} className="collection-item user-item">
+              <Link to={`/chat/${user._id}`} className="collection-item user-item">
                 <div>
                   {user.username}
                   <span href="#!" className="secondary-content">
@@ -140,4 +140,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatLobby);
+export default connect(mapStateToProps, mapDispatchToProps)(Contacts);
