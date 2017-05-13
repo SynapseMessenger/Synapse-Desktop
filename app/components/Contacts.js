@@ -75,9 +75,9 @@ class Contacts extends React.Component {
 
         <h6 className="left-align">Online: ({onlineCount})</h6>
         <ul className="collection with-header user-list" hidden={onlineCount === 0}>
-          {this.props.onlineUsers.map((user) => {
+          { this.props.onlineUsers.map((user) => {
             return (
-              <Link to={`/chat/${user._id}`} className="collection-item user-item">
+              <Link to={`/chat/${user._id}`} className="collection-item user-item" key={user._id}>
                   <div>
                     {user.username}
                     <span href="#!" className="secondary-content">
@@ -91,9 +91,9 @@ class Contacts extends React.Component {
 
         <h6 className="left-align">Offline: ({offlineCount})</h6>
         <ul className="collection with-header user-list" hidden={offlineCount === 0}>
-          {this.props.offlineUsers.map((user) => {
+          { this.props.offlineUsers.map((user) => {
             return (
-              <Link to={`/chat/${user._id}`} className="collection-item user-item">
+              <Link to={`/chat/${user._id}`} className="collection-item user-item" key={user._id}>
                 <div>
                   {user.username}
                   <span href="#!" className="secondary-content">

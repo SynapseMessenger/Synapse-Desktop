@@ -24,11 +24,20 @@ class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.updateChat = this.updateChat.bind(this);
-    props.updateNavbar(props.receiver.username, '/contacts');
-    props.chatClient.updateView = this.updateChat;
+  }
 
-    if(!props.conversation || props.conversation.length === 0){
-      props.chatClient.initChat(props.emitter._id);
+  componentDidMount() {
+    const {
+      updateNavbar, receiver,
+      chatClient, conversation,
+      emitter
+    } = this.props;
+
+    updateNavbar(receiver.username, '/contacts');
+    chatClient.updateView = this.updateChat;
+
+    if (!conversation || conversation.length === 0) {
+      chatClient.initChat(emitter._id);
     }
   }
 

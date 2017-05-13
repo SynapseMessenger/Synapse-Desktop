@@ -23,6 +23,7 @@ const Conversation = (props) => {
                   text={message.text}
                   time={message.time}
                   isOwn={message.emitterId === user._id}
+                  key={message.time + message.emitterId}
                 />
               );
             })}
