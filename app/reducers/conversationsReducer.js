@@ -9,18 +9,14 @@
 const conversationsReducer = (state = {}, action) => {
   switch (action.type) {
     case 'SEND_ACCEPT_CHAT':
-      // Create conversation
-      state = {
-        ...state,
-        [action.userId]: []
-      }
-      break;
     case 'RECEIVED_ACCEPT_CHAT':
       // Create conversation
-      state = {
-        ...state,
-        [action.userId]: []
-      };
+      if(!state[action.userId]){
+        state = {
+          ...state,
+          [action.userId]: []
+        }
+      }
       break;
     /* userId is with whom the Client's user has a conversation with. */
     case 'ADD_MSG_TO_CHAT':

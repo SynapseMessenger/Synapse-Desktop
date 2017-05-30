@@ -30,26 +30,26 @@ class Chat extends React.Component {
     const {
       updateNavbar, receiver,
       chatClient, conversation,
-      emitter
+      user
     } = this.props;
 
     updateNavbar(receiver.username, '/contacts');
     chatClient.updateView = this.updateChat;
 
     if (!conversation || conversation.length === 0) {
-      chatClient.initChat(emitter._id);
+      chatClient.initChat(user._id);
     }
   }
 
   updateChat(update){
-    const { emitter, receiver } = this.props;
+    const { user, receiver } = this.props;
     switch(update.event){
       case 'init-chat':
-        this.props.chatClient.acceptChat(emitter._id, receiver._id);
+        this.props.chatClient.acceptChat(user._id, receiver._id);
         this.props.sendAcceptChat(receiver._id);
         break;
       case 'accept-chat':
-        this.props.receivedAcceptChat(emitter._id);
+        this.props.receivedAcceptChat(user._id);
         break;
       case 'chat-msg':
         const { message } = update.data;
@@ -61,11 +61,11 @@ class Chat extends React.Component {
   }
 
   render() {
-    const { emitter, receiver } = this.props;
+    const { user, receiver } = this.props;
     return (
       <div className="container">
         <Conversation receiverId={receiver._id} />
-        <MessageInput emitterId={emitter._id} receiverId={receiver._id} />
+        <MessageInput emitterId={user._id} receiverId={receiver._id} />
       </div>
     );
   }
@@ -77,7 +77,7 @@ const mapStateToProps = (state, ownProps) => {
   const allUsers = onlineUsers.concat(offlineUsers);
   return {
     receiver: allUsers.find((user) => user._id === receiverId),
-    emitter: state.user,
+    user: state.user,
     chatClient: state.chat.client,
   };
 };
