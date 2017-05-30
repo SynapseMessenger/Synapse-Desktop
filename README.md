@@ -6,7 +6,7 @@ This desktop client is being build on top of [Electron][1], using [React.js][2] 
 
 > DISCLAIMER: This code has not yet received sufficient review by any qualified cryptographers to be considered in any way, shape, or form, safe.
 
-*Created by Marco Fernández Pranno*
+*Created by Marco Fernández Pranno, 2017*
 
 [1]: https://electron.atom.io/
 [2]: https://facebook.github.io/react/
