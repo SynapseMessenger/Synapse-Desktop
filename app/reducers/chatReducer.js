@@ -7,19 +7,42 @@
  * ************************************************************** */
 
 import ChatClient from '../utils/chat_client.js';
+import io from 'socket.io-client';
 
-const chatReducer = (state = {}, action) => {
+const initialState = {
+  host: 'http://localhost',
+  port: 9090,
+  username: 'anonymous',
+  connected: false
+}
+
+const chatReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'SET_USERNAME':
-      const chatClient = new ChatClient(action.username, state.serverUrl, state.serverPort);
+    case 'SET_CONNECTED':
       state = {
         ...state,
-        client: chatClient
+        connected: action.value
       }
       break;
+    case 'SET_USERNAME':
+      state = {
+        ...state,
+        username: action.username
+      }
+      break;
+    case 'CONNECT':
+    console.log('connecting...');
+      const { host, port } = state;
+      console.log(state);
+      const socket = io.connect(`${host}:${port}`, { query: "username=" + state.username } );
+      state = {
+        ...state,
+        socket
+      }
+      break;
+    case 'UPDATE_USER_LIST':
       // TODO: Add list for already started conversations.
       // TODO 2.0: Use objects {userId: user} and optimize this operation.
-    case 'UPDATE_USER_LIST':
       let onlineUsers = [];
       let offlineUsers = [];
 

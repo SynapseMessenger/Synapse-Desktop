@@ -11,59 +11,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addPendingMessages } from '../actions/conversationsActions';
-import { updateUserLists } from '../actions/chatActions';
-import { setUser } from '../actions/userActions';
 import { Link } from 'react-router-dom';
 
 class Contacts extends React.Component {
 
   constructor(props){
     super(props);
-    this.connectToServer = this.connectToServer.bind(this);
-    this.updateContacts = this.updateContacts.bind(this);
     this.showGreetings = this.showGreetings.bind(this);
     this.showUsers = this.showUsers.bind(this);
-
-    this.state = {
-      connectedToServer: props.chatClient.connected
-    };
-  }
-
-  componentDidMount(){
-    if(this.props.chatClient)
-      this.props.chatClient.updateView = this.updateContacts;
-      if(!this.props.chatClient.connected){
-        this.connectToServer();
-      }
-  }
-
-  connectToServer(){
-    this.props.chatClient.connect();
-  }
-
-  updateContacts(update){
-    switch(update.event){
-      case 'connected':
-        this.setState({ connectedToServer: true });
-        break;
-      case 'init-connection-msg':
-        const { allUsers, pendingMessages, user } = update.data;
-        this.props.updateUserLists(allUsers);
-        this.props.addPendingMessages(pendingMessages);
-        this.props.setUser(user);
-      break;
-    }
   }
 
   showGreetings(){
     return(
       <div className="greetings-message">
-        Hello, {this.props.chatClient.username}!
+        Hello, {this.props.username}!
         Connecting to server...
       </div>
     )
-
   }
 
   showUsers(){
@@ -77,7 +41,7 @@ class Contacts extends React.Component {
         <ul className="collection with-header user-list" hidden={onlineCount === 0}>
           { this.props.onlineUsers.map((user) => {
             return (
-              <Link to={`/chat/${user._id}`} className="collection-item user-item" key={user._id}>
+              <Link to={`/synapse/chat/${user._id}`} className="collection-item user-item" key={user._id}>
                   <div>
                     {user.username}
                     <span href="#!" className="secondary-content">
@@ -93,7 +57,7 @@ class Contacts extends React.Component {
         <ul className="collection with-header user-list" hidden={offlineCount === 0}>
           { this.props.offlineUsers.map((user) => {
             return (
-              <Link to={`/chat/${user._id}`} className="collection-item user-item" key={user._id}>
+              <Link to={`/synapse/chat/${user._id}`} className="collection-item user-item" key={user._id}>
                 <div>
                   {user.username}
                   <span href="#!" className="secondary-content">
@@ -109,7 +73,7 @@ class Contacts extends React.Component {
   }
 
   render() {
-    const displayInfo = this.state.connectedToServer && this.props.onlineUsers ? this.showUsers() : this.showGreetings();
+    const displayInfo = this.props.connected && this.props.onlineUsers ? this.showUsers() : this.showGreetings();
     return (
       <div className="container">
         {displayInfo}
@@ -118,26 +82,18 @@ class Contacts extends React.Component {
   }
 }
 
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    updateUserLists,
-    addPendingMessages,
-    setUser
-  }, dispatch);
-};
-
 const mapStateToProps = (state) => {
   const {
-    client,
     onlineUsers,
-    offlineUsers
+    offlineUsers,
+    connected,
+    username
   } = state.chat;
   return {
-    chatClient: client,
     onlineUsers,
-    offlineUsers
+    offlineUsers,
+    username
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Contacts);
+export default connect(mapStateToProps, null)(Contacts);

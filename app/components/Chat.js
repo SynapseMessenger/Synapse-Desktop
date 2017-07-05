@@ -33,30 +33,11 @@ class Chat extends React.Component {
       user
     } = this.props;
 
-    updateNavbar(receiver.username, '/contacts');
+    updateNavbar(receiver.username, '/synapse/contacts');
     chatClient.updateView = this.updateChat;
 
     if (!conversation || conversation.length === 0) {
       chatClient.initChat(user._id);
-    }
-  }
-
-  updateChat(update){
-    const { user, receiver } = this.props;
-    switch(update.event){
-      case 'init-chat':
-        this.props.chatClient.acceptChat(user._id, receiver._id);
-        this.props.sendAcceptChat(receiver._id);
-        break;
-      case 'accept-chat':
-        this.props.receivedAcceptChat(user._id);
-        break;
-      case 'chat-msg':
-        const { message } = update.data;
-        this.props.addMessageToChat(message, message.emitterId);
-        break;
-      default:
-        break;
     }
   }
 

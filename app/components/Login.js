@@ -30,7 +30,7 @@ class Login extends React.Component {
             </label>
 
             <div className="center-align">
-              <Link className="waves-effect waves-light btn" to="/contacts">
+              <Link className="waves-effect waves-light btn" to="/synapse/contacts">
                 Continue
               </Link>
             </div>
