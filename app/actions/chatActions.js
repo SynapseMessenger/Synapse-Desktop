@@ -19,13 +19,6 @@ export const connectChat = () => {
   }
 }
 
-export const setConnected = (value) => {
-  return {
-    type: 'SET_CONNECTED',
-    value
-  }
-}
-
 export const updateUserLists = (allUsers) => {
   return {
     type: 'UPDATE_USER_LIST',

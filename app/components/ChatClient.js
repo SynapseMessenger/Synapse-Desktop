@@ -20,7 +20,6 @@ import {
 } from '../actions/conversationsActions';
 import {
   updateUserLists,
-  setConnected,
   connectChat
 } from '../actions/chatActions';
 import { setUser } from '../actions/userActions';
@@ -35,27 +34,28 @@ class ChatClient extends React.Component {
     this.listenToEvents = this.listenToEvents.bind(this);
   }
 
-  componentDidMount(){
-    console.log(this.props);
-    const { connected, socket } = this.props;
-
-    if (!connected) {
+  componentDidMount() {
+    if(!this.props.socket) {
+      console.log('DidMound: connecting');
       this.props.connectChat();
-    } else if (socket) {
+    } else {
+      console.log('DidMount: already connected');
+    }
+  }
+
+  componentDidUpdate(prevProps){
+    if (!prevProps.socket && this.props.socket) {
+      console.log('DidUpdate: listening to events');
       this.listenToEvents();
     }
   }
 
   listenToEvents() {
+    console.log("LISTENING TO EVENTS!!!");
     const { socket, user, receiver } = this.props;
-    console.log('listening to events');
-    socket.on('connect', () => {
-      console.log('setting connected');
-      this.props.setConnected(true);
-    });
 
     socket.on('init-connection-msg', (data) => {
-      const { allUsers, pendingMessages, user } = update.data;
+      const { allUsers, pendingMessages, user } = data;
       this.props.updateUserLists(allUsers);
       this.props.addPendingMessages(pendingMessages);
       this.props.setUser(user);
@@ -99,7 +99,6 @@ const mapDispatchToProps = (dispatch) => {
     updateUserLists,
     addPendingMessages,
     setUser,
-    setConnected,
     connectChat,
     sendAcceptChat,
     receivedAcceptChat
@@ -109,11 +108,11 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state, ownProps) => {
   const receiverId = ownProps.match.params.userId;
   const receiver = receiverId ? allUsers.find((user) => user._id === receiverId) : null;
+  console.log("State: ", state);
   const {
     onlineUsers,
     offlineUsers,
     user,
-    connected,
     socket
   } = state.chat;
   return {
@@ -121,7 +120,6 @@ const mapStateToProps = (state, ownProps) => {
     offlineUsers,
     user,
     receiver,
-    connected,
     socket
   };
 };

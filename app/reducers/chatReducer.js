@@ -12,34 +12,27 @@ import io from 'socket.io-client';
 const initialState = {
   host: 'http://localhost',
   port: 9090,
-  username: 'anonymous',
-  connected: false
+  username: 'anonymous'
 }
 
 const chatReducer = (state = initialState, action) => {
+  console.log(action);
   switch (action.type) {
-    case 'SET_CONNECTED':
-      state = {
-        ...state,
-        connected: action.value
-      }
-      break;
     case 'SET_USERNAME':
-      state = {
+      return {
         ...state,
         username: action.username
       }
-      break;
     case 'CONNECT':
-    console.log('connecting...');
+      console.log('connecting...');
       const { host, port } = state;
-      console.log(state);
-      const socket = io.connect(`${host}:${port}`, { query: "username=" + state.username } );
-      state = {
+      const serverUrl = `${host}:${port}`;
+      console.log("Server url: ", serverUrl);
+      const socket = io.connect(serverUrl, { query: "username=" + state.username } );
+      return {
         ...state,
         socket
       }
-      break;
     case 'UPDATE_USER_LIST':
       // TODO: Add list for already started conversations.
       // TODO 2.0: Use objects {userId: user} and optimize this operation.
@@ -50,21 +43,17 @@ const chatReducer = (state = initialState, action) => {
         user.online ? onlineUsers.push(user) : offlineUsers.push(user);
       });
 
-      state = {
+      return {
         ...state,
         onlineUsers,
-        offlineUsers
+        offlineUsers,
+        allUsers: [...onlineUsers, ...offlineUsers]
       };
-      break;
     case 'SEND_INIT_CHAT':
-      break;
     case 'RECEIVED_INIT_CHAT':
-      break;
     default:
-      break;
+      return state;
   }
-
-  return state;
 }
 
 export default chatReducer;
