@@ -40,3 +40,11 @@ export const updateUserLists = (allUsers) => {
     allUsers
   }
 };
+
+export const updateUserStatus = (user, status) => {
+  return {
+    type: 'UPDATE_USER_STATUS',
+    user,
+    status
+  }
+};

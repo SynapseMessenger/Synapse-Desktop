@@ -9,8 +9,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addMessageToChat } from '../actions/conversationsActions';
-import { sendMessage } from '../actions/chatActions';
+import { addMessageToChat } from '../../actions/conversationsActions';
+import { sendMessage } from '../../actions/chatActions';
 
 // TODO: Refactor into stateless storing current message in store ?
 class MessageInput extends React.Component {

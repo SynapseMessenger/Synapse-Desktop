@@ -6,8 +6,8 @@
  * @version 1.0
  * ************************************************************** */
 
-import ChatClient from '../utils/chat_client.js';
 import io from 'socket.io-client';
+import { deleteItem, addItem } from '../utils/chat-reducer-helper';
 
 const initialState = {
   host: 'http://localhost',
@@ -42,20 +42,35 @@ const chatReducer = (state = initialState, action) => {
       state.socket.emit('chat-msg', { message: action.message });
       return state;
 
+    case 'UPDATE_USER_STATUS':
+      const online = (action.status === 'user-connected');
+      const { user } = action;
+      const { _id } = user;
+      const { onlineUsers, offlineUsers } = state;
+
+      return {
+        ...state,
+        offlineUsers: online ? deleteItem(_id, offlineUsers) : addItem(_id, user, offlineUsers),
+        onlineUsers: online ? addItem(_id, user, onlineUsers) : deleteItem(_id, onlineUsers),
+      }
+
     case 'UPDATE_USER_LIST':
       const { allUsers } = action;
-      let onlineUsers = [];
-      let offlineUsers = [];
+      let updatedOnlineUsers = {};
+      let updatedOfflineUsers = {};
 
       allUsers.map((user) => {
-        user.online ? onlineUsers.push(user) : offlineUsers.push(user);
+        if (user.online) {
+          updatedOnlineUsers[user._id] = user;
+        } else {
+          updatedOfflineUsers[user._id] = user;
+        }
       });
 
       return {
         ...state,
-        onlineUsers,
-        offlineUsers,
-        allUsers
+        onlineUsers: updatedOnlineUsers,
+        offlineUsers: updatedOfflineUsers,
       };
     default:
       return state;

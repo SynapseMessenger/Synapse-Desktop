@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import Conversation from './Conversation';
 import MessageInput from './MessageInput';
 import { bindActionCreators } from 'redux';
-import { updateNavbar } from '../actions/navbarActions';
+import { updateNavbar } from '../../actions/navbarActions';
 
 class Chat extends React.Component {
 
@@ -34,9 +34,9 @@ class Chat extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   const receiverId = ownProps.match.params.userId;
-  const { onlineUsers, offlineUsers, allUsers } = state.chat;
+  const { onlineUsers, offlineUsers } = state.chat;
   return {
-    receiver: allUsers.find((user) => user._id === receiverId),
+    receiver: onlineUsers[receiverId] || offlineUsers[receiverId] || null,
     user: state.chat.user,
   };
 };

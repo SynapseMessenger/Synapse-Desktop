@@ -8,7 +8,7 @@
 
 import React from 'react';
 import classNames from 'classnames';
-import formatDate from '../utils/format_date';
+import formatDate from '../../utils/format_date';
 
  const Message = (props) => {
    const { text, time, isOwn } = props;

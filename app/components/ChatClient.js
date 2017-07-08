@@ -18,14 +18,19 @@ import {
   sendAcceptChat,
   receivedAcceptChat
 } from '../actions/conversationsActions';
+
 import {
   updateUserLists,
   connectChat
 } from '../actions/chatActions';
-import { setUser } from '../actions/chatActions';
 
-import Contacts from './Contacts.js'
-import Chat from './Chat.js'
+import {
+  setUser,
+  updateUserStatus
+} from '../actions/chatActions';
+
+import Contacts from './Contacts'
+import Chat from './Chat'
 
 class ChatClient extends React.Component {
 
@@ -77,8 +82,12 @@ class ChatClient extends React.Component {
       }
     });
 
-    socket.on("user-connected", (response) => {
-      // this.displayEvent({ event: "user-connected", data: response });
+    socket.on('user-connected', (user) => {
+      this.props.updateUserStatus(user, 'user-connected');
+    });
+
+    socket.on('user-disconnected', (user) => {
+      this.props.updateUserStatus(user, 'user-disconnected');
     });
   }
 
@@ -101,7 +110,8 @@ const mapDispatchToProps = (dispatch) => {
     connectChat,
     sendAcceptChat,
     receivedAcceptChat,
-    addMessageToChat
+    addMessageToChat,
+    updateUserStatus
   }, dispatch);
 };
 
