@@ -10,29 +10,27 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addMessageToChat } from '../actions/conversationsActions';
+import { sendMessage } from '../actions/chatActions';
 
+// TODO: Refactor into stateless storing current message in store ?
 class MessageInput extends React.Component {
   constructor(props){
     super(props);
-    this.sendMessage = this.sendMessage.bind(this);
+    this.handleSend = this.handleSend.bind(this);
     this.state = {
       message: ''
     };
   }
 
-  sendMessage() {
-    const {
-      emitterId, receiverId,
-      chatClient, addMessageToChat
-    } = this.props;
+  handleSend() {
     const message = {
       text: this.state.message,
       time: Date.now(),
-      emitterId,
-      receiverId
+      emitterId: this.props.emitterId,
+      receiverId: this.props.receiverId
     };
-    chatClient.sendMessage(message);
-    addMessageToChat(message, message.receiverId);
+    this.props.addMessageToChat(message, this.props.receiverId);
+    this.props.sendMessage(message);
     this.setState({
       message: ""
     });
@@ -47,11 +45,11 @@ class MessageInput extends React.Component {
             rows="5"
             cols="50"
             value={this.state.message}
-            onChange={(ev) => { this.setState({message: ev.target.value})} }
+            onChange={(ev) => { this.setState({ message: ev.target.value })} }
           >
           </textarea>
         </div>
-        <div className="col s2" onClick={this.sendMessage}>
+        <div className="col s2" onClick={this.handleSend}>
           <a className="btn-floating waves-effect waves-light">
             <i className="material-icons">send</i>
           </a>
@@ -61,16 +59,11 @@ class MessageInput extends React.Component {
   }
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return {
-    chatClient: state.chat.client,
-  };
-};
-
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
+    sendMessage,
     addMessageToChat
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageInput);
+export default connect(null, mapDispatchToProps)(MessageInput);

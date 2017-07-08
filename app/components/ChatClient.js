@@ -22,7 +22,7 @@ import {
   updateUserLists,
   connectChat
 } from '../actions/chatActions';
-import { setUser } from '../actions/userActions';
+import { setUser } from '../actions/chatActions';
 
 import Contacts from './Contacts.js'
 import Chat from './Chat.js'
@@ -36,28 +36,25 @@ class ChatClient extends React.Component {
 
   componentDidMount() {
     if(!this.props.socket) {
-      console.log('DidMound: connecting');
       this.props.connectChat();
-    } else {
-      console.log('DidMount: already connected');
     }
   }
 
   componentDidUpdate(prevProps){
     if (!prevProps.socket && this.props.socket) {
-      console.log('DidUpdate: listening to events');
       this.listenToEvents();
     }
   }
 
   listenToEvents() {
-    console.log("LISTENING TO EVENTS!!!");
     const { socket, user, receiver } = this.props;
 
     socket.on('init-connection-msg', (data) => {
       const { allUsers, pendingMessages, user } = data;
       this.props.updateUserLists(allUsers);
-      this.props.addPendingMessages(pendingMessages);
+      pendingMessages.forEach(message => {
+        this.props.addMessageToChat(message, message.emitterId);
+      })
       this.props.setUser(user);
     });
 
@@ -74,8 +71,10 @@ class ChatClient extends React.Component {
     });
 
     socket.on('chat-msg', (data) => {
-      const { message } = data.data;
-      this.props.addMessageToChat(message, message.emitterId);
+      const { message } = data;
+      if (message.emitterId != this.props.user._id) {
+        this.props.addMessageToChat(message, message.emitterId);
+      }
     });
 
     socket.on("user-connected", (response) => {
@@ -101,19 +100,19 @@ const mapDispatchToProps = (dispatch) => {
     setUser,
     connectChat,
     sendAcceptChat,
-    receivedAcceptChat
+    receivedAcceptChat,
+    addMessageToChat
   }, dispatch);
 };
 
 const mapStateToProps = (state, ownProps) => {
   const receiverId = ownProps.match.params.userId;
   const receiver = receiverId ? allUsers.find((user) => user._id === receiverId) : null;
-  console.log("State: ", state);
   const {
     onlineUsers,
     offlineUsers,
-    user,
-    socket
+    socket,
+    user
   } = state.chat;
   return {
     onlineUsers,

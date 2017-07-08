@@ -10,28 +10,25 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Conversation from './Conversation';
 import MessageInput from './MessageInput';
-
-import { sendInitChat } from '../actions/chatActions';
-import {
-  addMessageToChat, receivedAcceptChat, sendAcceptChat
-} from '../actions/conversationsActions';
+import { bindActionCreators } from 'redux';
+import { updateNavbar } from '../actions/navbarActions';
 
 class Chat extends React.Component {
 
+  componentWillMount() {
+    this.props.updateNavbar(this.props.receiver.username, '/synapse/contacts');
+  }
+
   render() {
-    const { user, receiver, conversation } = this.props;
-    if (!conversation || conversation.length === 0) {
-      this.props.sendInitChat(user._id);
-    }
+    const { user, receiver } = this.props;
     return (
       <div className="container">
         <Conversation receiverId={receiver._id} />
         <MessageInput emitterId={user._id} receiverId={receiver._id} />
       </div>
-    );
+    )
   }
 }
 
@@ -40,13 +37,13 @@ const mapStateToProps = (state, ownProps) => {
   const { onlineUsers, offlineUsers, allUsers } = state.chat;
   return {
     receiver: allUsers.find((user) => user._id === receiverId),
-    user: state.user,
+    user: state.chat.user,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    sendInitChat
+    updateNavbar
   }, dispatch);
 };
 

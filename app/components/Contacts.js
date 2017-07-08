@@ -12,7 +12,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router-dom';
-import { updateNavbar } from '../actions/navbarActions';
 
 const Greetings = ({ username }) => (
   <div className="greetings-message">
@@ -34,7 +33,6 @@ const Users = ({ onlineUsers, offlineUsers }) => (
             to={`/synapse/chat/${user._id}`}
             className="collection-item user-item"
             key={user._id}
-            onClick={() => updateNavbar(user.username, '/synapse/contacts') }
             >
               <div>
                 {user.username}
@@ -55,7 +53,6 @@ const Users = ({ onlineUsers, offlineUsers }) => (
             to={`/synapse/chat/${user._id}`}
             className="collection-item user-item"
             key={user._id}
-            onClick={() => updateNavbar(user.username, '/synapse/contacts') }
             >
             <div>
               {user.username}
