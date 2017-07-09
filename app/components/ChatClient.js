@@ -21,7 +21,8 @@ import {
 
 import {
   updateUserLists,
-  connectChat
+  connectChat,
+  initSignal
 } from '../actions/chatActions';
 
 import {
@@ -52,7 +53,11 @@ class ChatClient extends React.Component {
   }
 
   listenToEvents() {
-    const { socket, user, receiver } = this.props;
+    const {
+      socket, user,
+      receiver, store,
+      preKeyId, signedKeyId
+    } = this.props;
 
     socket.on('init-connection-msg', (data) => {
       const { allUsers, pendingMessages, user } = data;
@@ -61,6 +66,7 @@ class ChatClient extends React.Component {
         this.props.addMessageToChat(message, message.emitterId);
       })
       this.props.setUser(user);
+      this.props.initSignal(socket, user._id, store, preKeyId, signedKeyId);
     });
 
     socket.on('init-chat', (data) => {
@@ -111,7 +117,8 @@ const mapDispatchToProps = (dispatch) => {
     sendAcceptChat,
     receivedAcceptChat,
     addMessageToChat,
-    updateUserStatus
+    updateUserStatus,
+    initSignal
   }, dispatch);
 };
 
@@ -124,12 +131,16 @@ const mapStateToProps = (state, ownProps) => {
     socket,
     user
   } = state.chat;
+  const { store, preKeyId, signedKeyId } = state.chat.signal;
   return {
     onlineUsers,
     offlineUsers,
     user,
     receiver,
-    socket
+    socket,
+    store,
+    preKeyId,
+    signedKeyId
   };
 };
 

@@ -8,14 +8,23 @@
 
 import io from 'socket.io-client';
 import { deleteItem, addItem } from '../utils/chat-reducer-helper';
+import SignalStore from '../utils/signal-store';
+const KeyHelper = libsignal.KeyHelper;
 
 const initialState = {
   host: 'http://localhost',
   port: 9090,
   username: 'anonymous',
+  signal: {
+    store: new SignalStore(),
+    preKeyId: 1337, // TODO: Change this.
+    signedKeyId: 1
+  }
 }
 
 const chatReducer = (state = initialState, action) => {
+  const { user } = action;
+
   switch (action.type) {
     case 'SET_USERNAME':
       return {
@@ -23,10 +32,22 @@ const chatReducer = (state = initialState, action) => {
         username: action.username
       }
 
+    case 'SET_SIGNAL_INIT_VALUES':
+      const { signalAddress, sessionBuilder, preKeyBundle } = action;
+      return {
+        ...state,
+        signal: {
+          ...state.signal,
+          sessionBuilder,
+          signalAddress,
+          preKeyBundle
+        }
+      }
+
     case 'SET_USER':
       return {
         ...state,
-        user: action.user
+        user
       };
 
     case 'CONNECT':
@@ -44,7 +65,6 @@ const chatReducer = (state = initialState, action) => {
 
     case 'UPDATE_USER_STATUS':
       const online = (action.status === 'user-connected');
-      const { user } = action;
       const { _id } = user;
       const { onlineUsers, offlineUsers } = state;
 

@@ -6,6 +6,8 @@
  * @version 1.0
  * ************************************************************** */
 
+ import { generatePreKeyBundle, generateIdentity } from '../utils/signal-helpers';
+
 export const setUsername = (username) => {
   return {
     type: 'SET_USERNAME',
@@ -47,4 +49,32 @@ export const updateUserStatus = (user, status) => {
     user,
     status
   }
+};
+
+const setSignalInitValues = (signalAddress, sessionBuilder, preKeyBundle) => {
+  return {
+    type: 'SET_SIGNAL_INIT_VALUES',
+    signalAddress,
+    sessionBuilder,
+    preKeyBundle
+  }
+};
+
+export const initSignal = (socket, userId, store, preKeyId, signedKeyId) => {
+  return (dispatch) => {
+    return generateKeys(socket, userId, store, preKeyId, signedKeyId).then((preKeyBundle) => {
+      const signalAddress = new libsignal.SignalProtocolAddress(userId, `desktop-${userId}`);
+      const sessionBuilder = new libsignal.SessionBuilder(store, signalAddress);
+      dispatch(setSignalInitValues(signalAddress, sessionBuilder, preKeyBundle));
+    })
+  }
+};
+
+const generateKeys = (socket, userId, store, preKeyId, signedKeyId) => {
+  return generateIdentity(store).then(() => {
+      return generatePreKeyBundle(store, preKeyId, signedKeyId)
+    }).then((preKeyBundle) => {
+      socket.emit('init-user-keybundle', { preKeyBundle });
+      return preKeyBundle;
+    })
 };

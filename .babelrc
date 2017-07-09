@@ -1,1 +1,1 @@
-{ "presets": ["es2015", "react", "electron"] }
+{ "presets": ["es2015", "react", "electron", "stage-0"] }
