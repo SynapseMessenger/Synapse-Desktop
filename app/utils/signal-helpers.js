@@ -54,8 +54,8 @@ export const generateKeys = (store, amount, keyId, signedId) => {
     signedKeyId++;
   }
 
-  return Promise.all(asyncKeyGenCalls).then( ownKeys => {
-    return { ownKeys, preKeyId, signedKeyId };
+  return Promise.all(asyncKeyGenCalls).then( newKeys => {
+    return { newKeys, preKeyId, signedKeyId };
   });
 }
 

@@ -15,14 +15,6 @@ export const setUsername = (username) => {
   }
 };
 
-export const setUser = (user) => {
-  return {
-    type: 'SET_USER',
-    user
-  }
-};
-
-
 export const sendMessage = (message) => {
   return {
     type: 'SEND_MESSAGE',
@@ -51,29 +43,43 @@ export const updateUserStatus = (user, status) => {
   }
 };
 
-const setSignalInitValues = (signalAddress, sessionBuilder, preKeyBundle) => {
-  return {
-    type: 'SET_SIGNAL_INIT_VALUES',
-    signalAddress,
-    sessionBuilder,
-    preKeyBundle
-  }
+const generateNewKeys = (signal, amount) => {
+  const { store, preKeyId, signedKeyId } = signal;
+  return generateKeys(store, amount, preKeyId, signedKeyId).then( result => {
+    return {
+      type: 'PUSH_KEYS',
+      newKeys: result.newKeys,
+      preKeyId: result.preKeyId,
+      signedKeyId: result.signedKeyId
+    };
+  });
 };
 
-export const initSignal = (socket, userId, store, keyId, signedId) => {
+export const initChat = (user, socket, keysReqAmount, signal) => {
   return (dispatch) => {
+    const signalAddress = new libsignal.SignalProtocolAddress(user._id, `desktop-${user._id}`);
+    const sessionBuilder = new libsignal.SessionBuilder(store, signalAddress);
+    dispatch({ type: 'INIT_CHAT', user, keysReqAmount, signalAddress, sessionBuilder });
+    dispatch({ type: 'GENERATING_INIT_KEYS' });
+    const { store, preKeyId, signedKeyId } = signal;
     return generateIdentity(store).then( () => {
-      const signalAddress = new libsignal.SignalProtocolAddress(userId, `desktop-${userId}`);
-      const sessionBuilder = new libsignal.SessionBuilder(store, signalAddress);
-      generateKeys(store, 10, keyId, signedId).then( result => {
-        const { ownKeys, preKeyId, signedKeyId } = result;
+      generateKeys(store, keysReqAmount * 2, preKeyId, signedKeyId).then( result => {
         dispatch({
           type: 'PUSH_KEYS',
-          ownKeys,
-          preKeyId,
-          signedKeyId
+          newKeys: result.newKeys,
+          preKeyId: result.preKeyId,
+          signedKeyId: result.signedKeyId
         });
+        dispatch({ type: 'GENERATED_INIT_KEYS' });
+        dispatch({ type: 'SEND_KEYS' });
       });
     })
   }
 };
+
+export const sendKeys = (signal, amount) => {
+  return (dispatch) => {
+    dispatch({ type: 'SEND_KEYS', amount });
+    generateNewKeys(signal, amount).then(newKeysAction => dispatch(newKeysAction));
+  }
+}

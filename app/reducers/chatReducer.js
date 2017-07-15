@@ -19,13 +19,13 @@ const initialState = {
     store: new SignalStore(),
     preKeyId: 1, // TODO: Change this.
     signedKeyId: 1,
-    ownKeys: []
+    ownKeys: [],
+    keysReqAmount: 10
   }
 }
 
 const chatReducer = (state = initialState, action) => {
   const { user } = action;
-
   switch (action.type) {
     case 'SET_USERNAME':
       return {
@@ -33,25 +33,42 @@ const chatReducer = (state = initialState, action) => {
         username: action.username
       }
 
-    case 'PUSH_KEYS':
-      console.log('pushing key!', action);
-      return state;
+    case 'GENERATING_INIT_KEYS':
+      return {
+        ...state,
+        generatingKeys: true
+      }
 
-    case 'SET_SIGNAL_INIT_VALUES':
-      const { signalAddress, sessionBuilder, preKeyBundle } = action;
+    case 'GENERATED_INIT_KEYS':
+      return {
+        ...state,
+        generatingKeys: false
+      }
+
+    case 'PUSH_KEYS':
+      const { newKeys, preKeyId, signedKeyId } = action;
+      const currentKeys = state.signal.ownKeys;
       return {
         ...state,
         signal: {
           ...state.signal,
+          ownKeys: [...currentKeys, ...newKeys],
+          preKeyId,
+          signedKeyId
+        }
+      };
+
+    case 'INIT_CHAT':
+      const { keysReqAmount, signalAddress, sessionBuilder } = action;
+      return {
+        ...state,
+        user,
+        signal: {
+          ...state.signal,
+          keysReqAmount,
           sessionBuilder,
           signalAddress
         }
-      }
-
-    case 'SET_USER':
-      return {
-        ...state,
-        user
       };
 
     case 'CONNECT':
@@ -68,14 +85,9 @@ const chatReducer = (state = initialState, action) => {
       return state;
 
     case 'SEND_KEYS':
-      state.socket.emit('receive-keys', { keys: state.signal.ownKeys });
-      return {
-        ...state,
-        signal: {
-          ...state.signal,
-          ownKeys: []
-        }
-      };
+      const keys = state.signal.ownKeys.splice(0, state.signal.keysReqAmount);
+      state.socket.emit('receive-keys', keys);
+      return state;
 
     case 'UPDATE_USER_STATUS':
       const online = (action.status === 'user-connected');

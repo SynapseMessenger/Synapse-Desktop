@@ -11,18 +11,33 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import UserList from './UserList';
-import Greetings from './Greetings';
 
-const Contacts = ({ connected }) => (
+const Contacts = ({ ready, connected, generatingKeys }) => (
   <div className="container">
-    { connected ? <UserList /> : <Greetings /> }
+    { ready ? <UserList /> : <LoadingScreen {...{connected, generatingKeys}} /> }
   </div>
 );
 
+const LoadingScreen = ({ connected, generatingKeys }) => (
+  // TODO: Make this work.
+  <div className="greetings-message">
+    <p>
+      { connected ? 'Connected' : 'Not connected' }
+    </p>
+    <p>
+      { generatingKeys ? 'Generating keys' : 'Not generating keys' }
+    </p>
+  </div>
+)
+
+
 const mapStateToProps = (state) => {
-  const { socket } = state.chat;
+  const { socket, generatingKeys } = state.chat;
+  const connected = socket && socket.connected;
   return {
-    connected: socket && socket.connected
+    ready: connected && !generatingKeys,
+    generatingKeys,
+    connected
   };
 };
 

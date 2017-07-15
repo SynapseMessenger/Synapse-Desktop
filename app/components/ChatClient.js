@@ -21,12 +21,12 @@ import {
 import {
   updateUserLists,
   connectChat,
-  initSignal,
-  generateKeys
+  generateKeys,
+  sendKeys
 } from '../actions/chatActions';
 
 import {
-  setUser,
+  initChat,
   updateUserStatus
 } from '../actions/chatActions';
 
@@ -53,20 +53,15 @@ class ChatClient extends React.Component {
   }
 
   listenToEvents() {
-    const {
-      socket, user,
-      receiver, store,
-      preKeyId, signedKeyId
-    } = this.props;
+    const { socket, user, receiver } = this.props;
 
     socket.on('init-connection-msg', (data) => {
-      const { allUsers, pendingMessages, user } = data;
+      const { allUsers, pendingMessages, user, keysReqAmount } = data;
       this.props.updateUserLists(allUsers);
       pendingMessages.forEach(message => {
         this.props.addMessageToChat(message, message.emitterId);
-      })
-      this.props.setUser(user);
-      this.props.initSignal(socket, user._id, store, preKeyId, signedKeyId);
+      });
+      this.props.initChat(user, socket, keysReqAmount, this.props.signal, socket);
     });
 
     socket.on('init-chat', (data) => {
@@ -95,6 +90,10 @@ class ChatClient extends React.Component {
     socket.on('user-disconnected', (user) => {
       this.props.updateUserStatus(user, 'user-disconnected');
     });
+
+    socket.on('request-keys', amount => {
+      this.props.sendKeys(this.props.signal, amount);
+    });
   }
 
   render(){
@@ -111,14 +110,14 @@ class ChatClient extends React.Component {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     updateUserLists,
-    setUser,
+    initChat,
     connectChat,
     sendAcceptChat,
     receivedAcceptChat,
     addMessageToChat,
     updateUserStatus,
-    initSignal,
-    generateKeys
+    generateKeys,
+    sendKeys
   }, dispatch);
 };
 
@@ -129,18 +128,17 @@ const mapStateToProps = (state, ownProps) => {
     onlineUsers,
     offlineUsers,
     socket,
-    user
+    user,
+    signal
   } = state.chat;
-  const { store, preKeyId, signedKeyId } = state.chat.signal;
+
   return {
     onlineUsers,
     offlineUsers,
     user,
     receiver,
     socket,
-    store,
-    preKeyId,
-    signedKeyId
+    signal
   };
 };
 
