@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   addMessageToChat,
-  addPendingMessages,
   sendAcceptChat,
   receivedAcceptChat
 } from '../actions/conversationsActions';
@@ -22,7 +21,8 @@ import {
 import {
   updateUserLists,
   connectChat,
-  initSignal
+  initSignal,
+  generateKeys
 } from '../actions/chatActions';
 
 import {
@@ -111,14 +111,14 @@ class ChatClient extends React.Component {
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     updateUserLists,
-    addPendingMessages,
     setUser,
     connectChat,
     sendAcceptChat,
     receivedAcceptChat,
     addMessageToChat,
     updateUserStatus,
-    initSignal
+    initSignal,
+    generateKeys
   }, dispatch);
 };
 

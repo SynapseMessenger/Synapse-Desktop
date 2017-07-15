@@ -1,3 +1,11 @@
+/* **************************************************************
+ *                  Synapse - Desktop Client
+ * @author Marco Fernandez Pranno <mfernandezpranno@gmail.com>
+ * @licence MIT
+ * @link https://github.com/SynapseNetwork/Synapse-Desktop
+ * @version 1.0
+ * ************************************************************** */
+
 const KeyHelper = libsignal.KeyHelper;
 
 export const generatePreKeyBundle = (store, preKeyId, signedPreKeyId) => {
@@ -33,6 +41,22 @@ export const generatePreKeyBundle = (store, preKeyId, signedPreKeyId) => {
             };
         });
     });
+}
+
+export const generateKeys = (store, amount, keyId, signedId) => {
+  let preKeyId = keyId;
+  let signedKeyId = signedId;
+  let asyncKeyGenCalls = [];
+
+  for (let i = 0; i < amount; i++) {
+    asyncKeyGenCalls.push(generatePreKeyBundle(store, preKeyId, signedKeyId));
+    preKeyId++;
+    signedKeyId++;
+  }
+
+  return Promise.all(asyncKeyGenCalls).then( ownKeys => {
+    return { ownKeys, preKeyId, signedKeyId };
+  });
 }
 
 export const generateIdentity = (store) => {

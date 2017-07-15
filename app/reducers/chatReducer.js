@@ -17,8 +17,9 @@ const initialState = {
   username: 'anonymous',
   signal: {
     store: new SignalStore(),
-    preKeyId: 1337, // TODO: Change this.
-    signedKeyId: 1
+    preKeyId: 1, // TODO: Change this.
+    signedKeyId: 1,
+    ownKeys: []
   }
 }
 
@@ -32,6 +33,10 @@ const chatReducer = (state = initialState, action) => {
         username: action.username
       }
 
+    case 'PUSH_KEYS':
+      console.log('pushing key!', action);
+      return state;
+
     case 'SET_SIGNAL_INIT_VALUES':
       const { signalAddress, sessionBuilder, preKeyBundle } = action;
       return {
@@ -39,8 +44,7 @@ const chatReducer = (state = initialState, action) => {
         signal: {
           ...state.signal,
           sessionBuilder,
-          signalAddress,
-          preKeyBundle
+          signalAddress
         }
       }
 
@@ -62,6 +66,16 @@ const chatReducer = (state = initialState, action) => {
     case 'SEND_MESSAGE':
       state.socket.emit('chat-msg', { message: action.message });
       return state;
+
+    case 'SEND_KEYS':
+      state.socket.emit('receive-keys', { keys: state.signal.ownKeys });
+      return {
+        ...state,
+        signal: {
+          ...state.signal,
+          ownKeys: []
+        }
+      };
 
     case 'UPDATE_USER_STATUS':
       const online = (action.status === 'user-connected');
