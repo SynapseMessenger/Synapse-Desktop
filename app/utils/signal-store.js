@@ -8,6 +8,8 @@
 
 "use strict";
 
+import util from './signal-util';
+
 module.exports = class SignalStore {
   constructor(){
     this.store = {};

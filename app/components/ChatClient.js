@@ -22,7 +22,8 @@ import {
   updateUserLists,
   connectChat,
   generateKeys,
-  sendKeys
+  sendKeys,
+  storeUserKeys
 } from '../actions/chatActions';
 
 import {
@@ -94,6 +95,10 @@ class ChatClient extends React.Component {
     socket.on('request-keys', amount => {
       this.props.sendKeys(this.props.signal, amount);
     });
+
+    socket.on('receive-keys', data => {
+      this.props.storeUserKeys(data.id, data.keys);
+    });
   }
 
   render(){
@@ -117,11 +122,13 @@ const mapDispatchToProps = (dispatch) => {
     addMessageToChat,
     updateUserStatus,
     generateKeys,
-    sendKeys
+    sendKeys,
+    storeUserKeys
   }, dispatch);
 };
 
 const mapStateToProps = (state, ownProps) => {
+  console.log('State: ', state);
   const receiverId = ownProps.match.params.userId;
   const receiver = receiverId ? allUsers.find((user) => user._id === receiverId) : null;
   const {

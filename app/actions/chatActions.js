@@ -8,6 +8,21 @@
 
  import { generateKeys, generateIdentity } from '../utils/signal-helpers';
 
+export const loadSession = (id) => {
+  return {
+    type: 'LOAD_SESSION',
+    id
+  }
+}
+
+export const storeUserKeys = (id, keys) => {
+  return {
+    type: 'STORE_USER_KEYS',
+    id,
+    keys
+  }
+};
+
 export const setUsername = (username) => {
   return {
     type: 'SET_USERNAME',
@@ -57,9 +72,7 @@ const generateNewKeys = (signal, amount) => {
 
 export const initChat = (user, socket, keysReqAmount, signal) => {
   return (dispatch) => {
-    const signalAddress = new libsignal.SignalProtocolAddress(user._id, `desktop-${user._id}`);
-    const sessionBuilder = new libsignal.SessionBuilder(store, signalAddress);
-    dispatch({ type: 'INIT_CHAT', user, keysReqAmount, signalAddress, sessionBuilder });
+    dispatch({ type: 'INIT_CHAT', user, keysReqAmount });
     dispatch({ type: 'GENERATING_INIT_KEYS' });
     const { store, preKeyId, signedKeyId } = signal;
     return generateIdentity(store).then( () => {

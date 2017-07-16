@@ -20,13 +20,53 @@ const initialState = {
     preKeyId: 1, // TODO: Change this.
     signedKeyId: 1,
     ownKeys: [],
-    keysReqAmount: 10
+    keysReqAmount: 10,
+    sessions: {}
   }
 }
 
 const chatReducer = (state = initialState, action) => {
   const { user } = action;
+  const { onlineUsers, offlineUsers, signal } = state;
+  const userId = user ? user._id : null;
+  console.log(action.type, action);
   switch (action.type) {
+    case 'LOAD_SESSION':
+      if (!signal.sessions[action.id]) {
+        const address = new libsignal.SignalProtocolAddress(`${action.id}`, 1);
+        const builder = new libsignal.SessionBuilder(signal.store, address);
+        const cipher = new libsignal.SessionCipher(signal.store, address);
+        state.socket.emit('request-keys', {id: action.id});
+        return {
+          ...state,
+          sessions: {
+            ...state.sessions,
+            [action.id]: {
+              builder,
+              cipher,
+              keys: []
+            }
+          }
+        }
+      } else {
+        if (state.sessions[action.id].keys.length <= signal.keysReqAmount) {
+          state.socket.emit('request-keys', { id: action.id });
+        }
+        return state;
+      }
+
+    case 'STORE_USER_KEYS':
+      return {
+        ...state,
+        sessions: {
+          ...state.sessions,
+          [action.id]: {
+            ...state.sessions[action.id],
+            keys: [...state.sessions[action.id].keys, ...action.keys]
+          }
+        }
+      }
+
     case 'SET_USERNAME':
       return {
         ...state,
@@ -59,15 +99,13 @@ const chatReducer = (state = initialState, action) => {
       };
 
     case 'INIT_CHAT':
-      const { keysReqAmount, signalAddress, sessionBuilder } = action;
+      const { keysReqAmount } = action;
       return {
         ...state,
         user,
         signal: {
           ...state.signal,
-          keysReqAmount,
-          sessionBuilder,
-          signalAddress
+          keysReqAmount
         }
       };
 
@@ -91,13 +129,11 @@ const chatReducer = (state = initialState, action) => {
 
     case 'UPDATE_USER_STATUS':
       const online = (action.status === 'user-connected');
-      const { _id } = user;
-      const { onlineUsers, offlineUsers } = state;
 
       return {
         ...state,
-        offlineUsers: online ? deleteItem(_id, offlineUsers) : addItem(_id, user, offlineUsers),
-        onlineUsers: online ? addItem(_id, user, onlineUsers) : deleteItem(_id, onlineUsers),
+        offlineUsers: online ? deleteItem(userId, offlineUsers) : addItem(userId, user, offlineUsers),
+        onlineUsers: online ? addItem(userId, user, onlineUsers) : deleteItem(userId, onlineUsers),
       }
 
     case 'UPDATE_USER_LIST':
