@@ -119,6 +119,9 @@ const chatReducer = (state = initialState, action) => {
       }
 
     case 'SEND_MESSAGE':
+      if (state.sessions[action.message.receiverId].keys.length <= signal.keysReqAmount) {
+        state.socket.emit('request-keys', { id: action.message.receiverId });
+      }
       state.socket.emit('chat-msg', { message: action.message });
       return state;
 
