@@ -23,7 +23,8 @@ import {
   connectChat,
   generateKeys,
   sendKeys,
-  storeUserKeys
+  storeUserKeys,
+  loadSession
 } from '../actions/chatActions';
 
 import {
@@ -123,7 +124,8 @@ const mapDispatchToProps = (dispatch) => {
     updateUserStatus,
     generateKeys,
     sendKeys,
-    storeUserKeys
+    storeUserKeys,
+    loadSession
   }, dispatch);
 };
 

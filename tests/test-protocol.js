@@ -1,7 +1,9 @@
 import SignalStore from '../app/utils/signal-store';
 const KeyHelper = libsignal.KeyHelper;
+import { preKeyToString, preKeyToArrayBuffer } from '../app/utils/signal-helpers';
 
 function toArrayBuffer (thing) {
+    var StaticArrayBufferProto = new ArrayBuffer().__proto__;
     if (thing === undefined) {
         return undefined;
     }
@@ -94,10 +96,22 @@ Promise.all([generateIdentity(aliceStore), generateIdentity(bobStore)]).then(() 
     var AliceBuilder = new libsignal.SessionBuilder(aliceStore, BOB_ADDRESS);
     var BobBuilder = new libsignal.SessionBuilder(bobStore, ALICE_ADDRESS);
 
+    console.log('Keys generated: ', bobPreKeyBundle, alicePreKeyBundle);
+
+    const parsedBobKeys = preKeyToString(bobPreKeyBundle);
+    const parsedAliceKeys = preKeyToString(alicePreKeyBundle);
+
+    const pBobK = preKeyToArrayBuffer(parsedBobKeys);
+    const pAliceK = preKeyToArrayBuffer(parsedAliceKeys);
+
+    console.log(pBobK, pAliceK);
+
     Promise.all([
-      AliceBuilder.processPreKey(bobPreKeyBundle),
-      BobBuilder.processPreKey(alicePreKeyBundle),
+      AliceBuilder.processPreKey(pBobK),
+      BobBuilder.processPreKey(pAliceK),
     ]).then(() => {
+
+      console.log('here');
 
       var msgToBob = toArrayBuffer("Message to Bob");
       var msgToBob2 = toArrayBuffer("Message to Bob2");

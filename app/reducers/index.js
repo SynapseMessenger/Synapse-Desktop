@@ -15,7 +15,6 @@ import navbarReducer from './navbarReducer';
 
 const appReducers =  combineReducers({
   chat: chatReducer,
-  conversations: conversationsReducer,
   navbar: navbarReducer
 });
 

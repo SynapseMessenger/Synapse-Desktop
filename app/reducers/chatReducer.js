@@ -9,6 +9,14 @@
 import io from 'socket.io-client';
 import { deleteItem, addItem } from '../utils/chat-reducer-helper';
 import SignalStore from '../utils/signal-store';
+import {
+  toArrayBuffer,
+  preKeyToString,
+  preKeyToArrayBuffer,
+  arrayBufferToString,
+  stringToBase64,
+  base64ToString
+} from '../utils/signal-helpers';
 const KeyHelper = libsignal.KeyHelper;
 
 const initialState = {
@@ -22,7 +30,8 @@ const initialState = {
     ownKeys: [],
     keysReqAmount: 10,
     sessions: {}
-  }
+  },
+  conversations: {}
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -31,6 +40,63 @@ const chatReducer = (state = initialState, action) => {
   const userId = user ? user._id : null;
   console.log(action.type, action);
   switch (action.type) {
+    case 'SEND_MESSAGE':
+      const { message } = action;
+      const userSession = state.signal.sessions[action.message.receiverId];
+
+      if (userSession.keys.length <= signal.keysReqAmount) {
+        state.socket.emit('request-keys', { id: action.message.receiverId });
+      }
+
+      const lastKey = userSession.keys.splice(0, 1)[0];
+      console.log('Using key: ', lastKey);
+      const parsedLastKey = preKeyToArrayBuffer(lastKey);
+
+      userSession.builder.processPreKey(parsedLastKey).then(() => {
+        userSession.cipher.encrypt(toArrayBuffer(action.message.text)).then((ciphertext) => {
+          const parsedCiphertext = stringToBase64(ciphertext.body);
+          console.log('Sending ', ciphertext);
+          console.log('In base 64: ', parsedCiphertext);
+          ciphertext.body = parsedCiphertext;
+          message.text = ciphertext;
+          state.socket.emit('chat-msg', { message: message });
+        })
+      });
+
+      return state;
+
+    case 'ADD_MSG_TO_CHAT':
+      const conversation = state.conversations[action.userId] || [];
+
+      action.message.text.body = base64ToString(action.message.text.body);
+      console.log('Ciphertext is: ', action.message.text.body);
+      const cipher = state.signal.sessions[action.userId].cipher;
+      return cipher.decryptPreKeyWhisperMessage(action.message.text.body, 'binary').then((plaintext) =>{
+        action.message.text = arrayBufferToString(plaintext);
+        return {
+          ...state,
+          conversations: {
+            ...state.conversations,
+            [action.userId]: [
+              ...conversation,
+              action.message
+            ]
+          }
+        };
+      });
+
+    case 'ADD_MSG_TO_SELF':
+      const selfConversation = state.conversations[action.userId] || [];
+      return {
+        ...state,
+        conversations: {
+          ...state.conversations,
+          [action.userId]: [
+            ...selfConversation,
+            action.message
+          ]
+        }
+      };
     case 'LOAD_SESSION':
       if (!signal.sessions[action.id]) {
         const address = new libsignal.SignalProtocolAddress(`${action.id}`, 1);
@@ -39,17 +105,20 @@ const chatReducer = (state = initialState, action) => {
         state.socket.emit('request-keys', {id: action.id});
         return {
           ...state,
-          sessions: {
-            ...state.sessions,
-            [action.id]: {
-              builder,
-              cipher,
-              keys: []
+          signal: {
+            ...state.signal,
+            sessions: {
+              ...state.signal.sessions,
+              [action.id]: {
+                builder,
+                cipher,
+                keys: []
+              }
             }
           }
         }
       } else {
-        if (state.sessions[action.id].keys.length <= signal.keysReqAmount) {
+        if (state.signal.sessions[action.id].keys.length <= signal.keysReqAmount) {
           state.socket.emit('request-keys', { id: action.id });
         }
         return state;
@@ -58,11 +127,14 @@ const chatReducer = (state = initialState, action) => {
     case 'STORE_USER_KEYS':
       return {
         ...state,
-        sessions: {
-          ...state.sessions,
-          [action.id]: {
-            ...state.sessions[action.id],
-            keys: [...state.sessions[action.id].keys, ...action.keys]
+        signal: {
+          ...state.signal,
+          sessions: {
+            ...state.signal.sessions,
+            [action.id]: {
+              ...state.signal.sessions[action.id],
+              keys: [...state.signal.sessions[action.id].keys, ...action.keys]
+            }
           }
         }
       }
@@ -118,16 +190,13 @@ const chatReducer = (state = initialState, action) => {
         socket
       }
 
-    case 'SEND_MESSAGE':
-      if (state.sessions[action.message.receiverId].keys.length <= signal.keysReqAmount) {
-        state.socket.emit('request-keys', { id: action.message.receiverId });
-      }
-      state.socket.emit('chat-msg', { message: action.message });
-      return state;
-
     case 'SEND_KEYS':
       const keys = state.signal.ownKeys.splice(0, state.signal.keysReqAmount);
-      state.socket.emit('receive-keys', keys);
+      const parsedKeys = [];
+      keys.forEach(key => {
+        parsedKeys.push(preKeyToString(key));
+      });
+      state.socket.emit('receive-keys', parsedKeys);
       return state;
 
     case 'UPDATE_USER_STATUS':

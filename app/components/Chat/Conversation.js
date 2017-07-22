@@ -37,7 +37,7 @@ const Conversation = (props) => {
 const mapStateToProps = (state, ownProps) => {
   return {
     user: state.chat.user,
-    messages: state.conversations[ownProps.receiverId]
+    messages: state.chat.conversations[ownProps.receiverId]
   };
 };
 

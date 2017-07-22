@@ -14,6 +14,14 @@ export const addMessageToChat = (message, userId) => {
   }
 };
 
+export const addMessageToSelf = (message, userId) => {
+  return {
+    type: 'ADD_MSG_TO_SELF',
+    message,
+    userId
+  }
+};
+
 export const addPendingMessages = (pendingMessages) => {
   return {
     type: 'ADD_PENDING_MESSAGES',
