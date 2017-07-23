@@ -18,14 +18,16 @@ import {
   base64ToString
 } from '../utils/signal-helpers';
 const KeyHelper = libsignal.KeyHelper;
+const serverHost = process.env.LOCAL_ENV ?
+                    'http://localhost:9090' :
+                    'https://synapse-messaging.herokuapp.com';
 
 const initialState = {
-  host: 'http://localhost',
-  port: 9090,
+  host: serverHost,
   username: 'anonymous',
   signal: {
     store: new SignalStore(),
-    preKeyId: 1, // TODO: Change this.
+    preKeyId: 1,
     signedKeyId: 1,
     sessions: {}
   },
@@ -162,9 +164,7 @@ const chatReducer = (state = initialState, action) => {
       };
 
     case 'CONNECT':
-      const { host, port } = state;
-      const serverUrl = `${host}:${port}`;
-      const socket = io.connect(serverUrl, { query: "username=" + state.username } );
+      const socket = io.connect(state.host, { query: "username=" + state.username } );
       return {
         ...state,
         socket
