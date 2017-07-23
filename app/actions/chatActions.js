@@ -6,7 +6,12 @@
  * @version 1.0
  * ************************************************************** */
 
- import { generateKeys, generateIdentity } from '../utils/signal-helpers';
+ import {
+   generateIdentity,
+   generatePreKeyBundle,
+   arrayBufferToString,
+   base64ToString
+ } from '../utils/signal-helpers';
 
 export const loadSession = (id) => {
   return {
@@ -15,27 +20,12 @@ export const loadSession = (id) => {
   }
 }
 
-export const storeUserKeys = (id, keys) => {
-  return {
-    type: 'STORE_USER_KEYS',
-    id,
-    keys
-  }
-};
-
 export const setUsername = (username) => {
   return {
     type: 'SET_USERNAME',
     username
   }
 };
-
-export const sendMessage = (message) => {
-  return {
-    type: 'SEND_MESSAGE',
-    message
-  }
-}
 
 export const connectChat = () => {
   return {
@@ -58,41 +48,76 @@ export const updateUserStatus = (user, status) => {
   }
 };
 
-const generateNewKeys = (signal, amount) => {
-  const { store, preKeyId, signedKeyId } = signal;
-  return generateKeys(store, amount, preKeyId, signedKeyId).then( result => {
-    return {
-      type: 'PUSH_KEYS',
-      newKeys: result.newKeys,
-      preKeyId: result.preKeyId,
-      signedKeyId: result.signedKeyId
-    };
-  });
-};
-
-export const initChat = (user, socket, keysReqAmount, signal) => {
-  return (dispatch) => {
-    dispatch({ type: 'INIT_CHAT', user, keysReqAmount });
-    dispatch({ type: 'GENERATING_INIT_KEYS' });
-    const { store, preKeyId, signedKeyId } = signal;
-    return generateIdentity(store).then( () => {
-      generateKeys(store, keysReqAmount * 2, preKeyId, signedKeyId).then( result => {
-        dispatch({
-          type: 'PUSH_KEYS',
-          newKeys: result.newKeys,
-          preKeyId: result.preKeyId,
-          signedKeyId: result.signedKeyId
-        });
-        dispatch({ type: 'GENERATED_INIT_KEYS' });
-        dispatch({ type: 'SEND_KEYS' });
+export const generateAndSendKey = (data, signal) => {
+  return dispatch => {
+    return generatePreKeyBundle(signal.store, signal.preKeyId, signal.signedKeyId).then(key => {
+      dispatch({
+        type: 'SEND_KEY',
+        preKeyId: signal.preKeyId + 1,
+        signedKeyId: signal.signedKeyId + 1,
+        receiverId: data.userId,
+        key
       });
-    })
-  }
-};
-
-export const sendKeys = (signal, amount) => {
-  return (dispatch) => {
-    dispatch({ type: 'SEND_KEYS', amount });
-    generateNewKeys(signal, amount).then(newKeysAction => dispatch(newKeysAction));
+    });
   }
 }
+export const parseKeyAndSendMessage = (data) => {
+  return {
+    type: 'SEND_MESSAGE',
+    key: data.key,
+    receiverId: data.generatorId
+  }
+};
+
+export const storeMessageRequestKey = (message) => {
+  return {
+    type: 'STORE_MSG_REQUEST_KEY',
+    message
+  }
+};
+
+export const initChat = (user, signal) => {
+  return dispatch => {
+    return generateIdentity(signal.store).then(() => {
+      dispatch({
+        type: 'INIT_CHAT',
+        user
+      });
+    });
+  }
+}
+
+export const addMessageToChat = (message, userId, signal) => {
+ return dispatch => {
+   const stringCiphertext = base64ToString(message.text);
+   const cipher = signal.sessions[userId].cipher;
+   return cipher.decryptPreKeyWhisperMessage(stringCiphertext, 'binary').then((plaintext) => {
+     const stringPlaintext = arrayBufferToString(plaintext);
+     const plainMessage = {
+       ...message,
+       text: stringPlaintext
+     };
+
+     dispatch({
+       type: 'ADD_MSG_TO_CHAT',
+       message: plainMessage,
+       userId
+     });
+   });
+ }
+};
+
+export const addMessageToSelf = (message, userId) => {
+ return {
+   type: 'ADD_MSG_TO_SELF',
+   message,
+   userId
+ }
+};
+
+export const addPendingMessages = (pendingMessages) => {
+ return {
+   type: 'ADD_PENDING_MESSAGES',
+   pendingMessages
+ }
+};

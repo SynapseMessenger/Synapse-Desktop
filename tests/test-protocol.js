@@ -1,6 +1,8 @@
 import SignalStore from '../app/utils/signal-store';
 const KeyHelper = libsignal.KeyHelper;
-import { preKeyToString, preKeyToArrayBuffer } from '../app/utils/signal-helpers';
+import {
+  preKeyToString, preKeyToArrayBuffer, stringToBase64, base64ToString
+} from '../app/utils/signal-helpers';
 
 function toArrayBuffer (thing) {
     var StaticArrayBufferProto = new ArrayBuffer().__proto__;
@@ -96,22 +98,16 @@ Promise.all([generateIdentity(aliceStore), generateIdentity(bobStore)]).then(() 
     var AliceBuilder = new libsignal.SessionBuilder(aliceStore, BOB_ADDRESS);
     var BobBuilder = new libsignal.SessionBuilder(bobStore, ALICE_ADDRESS);
 
-    console.log('Keys generated: ', bobPreKeyBundle, alicePreKeyBundle);
-
     const parsedBobKeys = preKeyToString(bobPreKeyBundle);
     const parsedAliceKeys = preKeyToString(alicePreKeyBundle);
 
     const pBobK = preKeyToArrayBuffer(parsedBobKeys);
     const pAliceK = preKeyToArrayBuffer(parsedAliceKeys);
 
-    console.log(pBobK, pAliceK);
-
     Promise.all([
       AliceBuilder.processPreKey(pBobK),
       BobBuilder.processPreKey(pAliceK),
     ]).then(() => {
-
-      console.log('here');
 
       var msgToBob = toArrayBuffer("Message to Bob");
       var msgToBob2 = toArrayBuffer("Message to Bob2");
@@ -122,10 +118,10 @@ Promise.all([generateIdentity(aliceStore), generateIdentity(bobStore)]).then(() 
       var bobSessionCipher = new libsignal.SessionCipher(bobStore, ALICE_ADDRESS);
 
       aliceSessionCipher.encrypt(msgToBob).then(function(ciphertext) {
-          return bobSessionCipher.decryptPreKeyWhisperMessage(ciphertext.body, 'binary');
+          const base64Msg = stringToBase64(ciphertext.body);
+          const stringMsg = base64ToString(base64Msg);
+          return bobSessionCipher.decryptPreKeyWhisperMessage(stringMsg, 'binary');
       }).then(function(plaintext) {
-          console.log('Plain text', ab2str(plaintext));
-          console.log('Original: ', ab2str(msgToBob));
 
           generatePreKeyBundle(bobStore, bobPreKeyId, bobSignedKeyId).then((newKeyBundle) => {
             AliceBuilder.processPreKey(newKeyBundle).then(() => {
@@ -133,22 +129,15 @@ Promise.all([generateIdentity(aliceStore), generateIdentity(bobStore)]).then(() 
               aliceSessionCipher.encrypt(msgToBob2).then(function(ciphertext2) {
                   return bobSessionCipher.decryptPreKeyWhisperMessage(ciphertext2.body, 'binary');
               }).then(function(plaintext2) {
-                  console.log('Plain text2', ab2str(plaintext2));
-                  console.log('Original2: ', ab2str(msgToBob2));
-
                   aliceSessionCipher.encrypt(msgToBob3).then(function(ciphertext3) {
                       return bobSessionCipher.decryptPreKeyWhisperMessage(ciphertext3.body, 'binary');
                   }).then(function(plaintext3) {
-                      console.log('Plain text3', ab2str(plaintext3));
-                      console.log('Original3: ', ab2str(msgToBob3));
                   });
               });
 
             })
           })
       });
-
-      console.log('done');
     });
   });
 });

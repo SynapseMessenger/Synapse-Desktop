@@ -70,6 +70,7 @@ export const generateIdentity = (store) => {
 };
 
 export const toArrayBuffer = (thing) => {
+    let StaticArrayBufferProto = new ArrayBuffer().__proto__;
     if (thing === undefined) {
         return undefined;
     }

@@ -12,24 +12,17 @@ import React     from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-  addMessageToChat,
-  sendAcceptChat,
-  receivedAcceptChat
-} from '../actions/conversationsActions';
 
 import {
   updateUserLists,
   connectChat,
-  generateKeys,
-  sendKeys,
-  storeUserKeys,
-  loadSession
-} from '../actions/chatActions';
-
-import {
+  generateAndSendKey,
+  parseKeyAndSendMessage,
   initChat,
-  updateUserStatus
+  updateUserStatus,
+  addMessageToChat,
+  sendAcceptChat,
+  receivedAcceptChat
 } from '../actions/chatActions';
 
 import Contacts from './Contacts'
@@ -58,12 +51,9 @@ class ChatClient extends React.Component {
     const { socket, user, receiver } = this.props;
 
     socket.on('init-connection-msg', (data) => {
-      const { allUsers, pendingMessages, user, keysReqAmount } = data;
+      const { allUsers, user } = data;
       this.props.updateUserLists(allUsers);
-      pendingMessages.forEach(message => {
-        this.props.addMessageToChat(message, message.emitterId);
-      });
-      this.props.initChat(user, socket, keysReqAmount, this.props.signal, socket);
+      this.props.initChat(user, this.props.signal);
     });
 
     socket.on('init-chat', (data) => {
@@ -81,24 +71,26 @@ class ChatClient extends React.Component {
     socket.on('chat-msg', (data) => {
       const { message } = data;
       if (message.emitterId != this.props.user._id) {
-        this.props.addMessageToChat(message, message.emitterId);
+        this.props.addMessageToChat(message, message.emitterId, this.props.signal);
       }
     });
 
     socket.on('user-connected', (user) => {
+      console.log('User connected', user);
       this.props.updateUserStatus(user, 'user-connected');
     });
 
     socket.on('user-disconnected', (user) => {
+      console.log('User disconnected', user);
       this.props.updateUserStatus(user, 'user-disconnected');
     });
 
-    socket.on('request-keys', amount => {
-      this.props.sendKeys(this.props.signal, amount);
+    socket.on('request-key', data => {
+      this.props.generateAndSendKey(data, this.props.signal);
     });
 
-    socket.on('receive-keys', data => {
-      this.props.storeUserKeys(data.id, data.keys);
+    socket.on('receive-key', data => {
+      this.props.parseKeyAndSendMessage(data);
     });
   }
 
@@ -122,15 +114,12 @@ const mapDispatchToProps = (dispatch) => {
     receivedAcceptChat,
     addMessageToChat,
     updateUserStatus,
-    generateKeys,
-    sendKeys,
-    storeUserKeys,
-    loadSession
+    generateAndSendKey,
+    parseKeyAndSendMessage
   }, dispatch);
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log('State: ', state);
   const receiverId = ownProps.match.params.userId;
   const receiver = receiverId ? allUsers.find((user) => user._id === receiverId) : null;
   const {

@@ -8,20 +8,19 @@ function userListCount(userList) {
 }
 
 const UserList = ({ onlineUsers, offlineUsers }) => (
-
   <div>
     <h4 className="center-align contacts-title">Contacts</h4>
-    <h6 className="left-align">Online: ({userListCount(onlineUsers)})</h6>
-    <ul className="collection with-header user-list" hidden={userListCount(onlineUsers) === 0}>
-      { Object.keys(onlineUsers).map(id =>
-        <UserItem key={`online-${id}`} id={id} username={onlineUsers[id].username } />
+    <h6 className="left-align">Online: ({onlineUsers.length})</h6>
+    <ul className="collection with-header user-list" hidden={onlineUsers.length === 0}>
+      { onlineUsers.map(user =>
+        <UserItem key={`online-${user._id}`} id={user._id} username={user.username } />
       )}
     </ul>
 
-    <h6 className="left-align">Offline: ({userListCount(offlineUsers)})</h6>
-    <ul className="collection with-header user-list" hidden={userListCount(offlineUsers) === 0}>
-      { Object.keys(offlineUsers).map(id =>
-        <UserItem key={`offline-${id}`} id={id} username={offlineUsers[id].username } />
+    <h6 className="left-align">Offline: ({offlineUsers.length})</h6>
+    <ul className="collection with-header user-list" hidden={offlineUsers.length === 0}>
+      { offlineUsers.map(user =>
+        <UserItem key={`offline-${user._id}`} id={user._id} username={user.username } />
       )}
     </ul>
   </div>
@@ -30,8 +29,8 @@ const UserList = ({ onlineUsers, offlineUsers }) => (
 const mapStateToProps = (state) => {
   const { onlineUsers, offlineUsers } = state.chat;
   return {
-    onlineUsers,
-    offlineUsers,
+    onlineUsers: Object.values(onlineUsers),
+    offlineUsers: Object.values(offlineUsers),
   };
 };
 
