@@ -20,7 +20,7 @@ import {
 const KeyHelper = libsignal.KeyHelper;
 const serverHost = process.env.LOCAL_ENV ?
                     'http://localhost:9090' :
-                    'https://synapse-messaging.herokuapp.com';
+                    'https://synapse-main-server.herokuapp.com';
 
 const initialState = {
   host: serverHost,
