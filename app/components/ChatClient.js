@@ -44,11 +44,9 @@ class ChatClient extends React.Component {
   }
 
   listenToEvents() {
-    console.log('Listening to users events');
     const { socket, user, receiver } = this.props;
 
     socket.on('init-connection-msg', (data) => {
-      console.log('init msg received');
       const { allUsers, user } = data;
       this.props.updateUserLists(allUsers);
       this.props.initChat(user);
@@ -62,12 +60,10 @@ class ChatClient extends React.Component {
     });
 
     socket.on('user-connected', (user) => {
-      console.log('User connected', user);
       this.props.updateUserStatus(user, 'user-connected');
     });
 
     socket.on('user-disconnected', (user) => {
-      console.log('User disconnected', user);
       this.props.updateUserStatus(user, 'user-disconnected');
     });
   }

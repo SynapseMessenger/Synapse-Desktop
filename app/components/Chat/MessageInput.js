@@ -9,7 +9,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addMessageToSelf } from '../../actions/chatActions';
+import { addMessageToSelf, sendMessage } from '../../actions/chatActions';
 
 // TODO: Refactor into stateless storing current message in store ?
 class MessageInput extends React.Component {
@@ -29,6 +29,7 @@ class MessageInput extends React.Component {
       receiverId: this.props.receiverId
     };
     this.props.addMessageToSelf(message, this.props.receiverId);
+    this.props.sendMessage(message);
     this.setState({
       message: ""
     });
@@ -59,7 +60,8 @@ class MessageInput extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    addMessageToSelf
+    addMessageToSelf,
+    sendMessage
   }, dispatch);
 };
 

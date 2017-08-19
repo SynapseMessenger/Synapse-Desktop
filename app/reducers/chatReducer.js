@@ -65,12 +65,6 @@ const chatReducer = (state = initialState, action) => {
 
     case 'CONNECT':
       const socket = io.connect(state.host, { query: "username=" + state.username });
-      socket.on('connect', () => {
-        socket.on('hello1', () => console.log('hello1 dentro del callback'));
-        console.log('connect received');
-      });
-      socket.on('hello2', () => console.log('hello2 fuera del callback'));
-      console.log('listened to connect');
       return {
         ...state,
         socket

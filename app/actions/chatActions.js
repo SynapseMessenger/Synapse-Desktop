@@ -19,6 +19,13 @@ export const connectChat = () => {
   }
 }
 
+export const sendMessage = (data) => {
+  return {
+    type: 'SEND_MESSAGE',
+    message: data
+  }
+};
+
 export const updateUserLists = (allUsers) => {
   return {
     type: 'UPDATE_USER_LIST',
