@@ -1,15 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import { loadSession } from '../../../actions/chatActions';
 
-const UserItem = ({ id, username, loadSession }) => (
+const UserItem = ({ id, username }) => (
   <Link
     to={`/synapse/chat/${id}`}
     className="collection-item user-item"
     key={id}
-    onClick={(ev) => { loadSession(id) }}
   >
     <div>
       {username}
@@ -20,10 +16,4 @@ const UserItem = ({ id, username, loadSession }) => (
   </Link>
 )
 
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({
-    loadSession
-  }, dispatch);
-};
-
-export default connect(null, mapDispatchToProps)(UserItem);
+export default UserItem;

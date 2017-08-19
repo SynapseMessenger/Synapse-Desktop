@@ -11,18 +11,6 @@
         window.Hammer = require('./node_modules/materialize-css/js/hammer.min.js');
     </script>
     <script src="./node_modules/materialize-css/dist/js/materialize.min.js"></script>
-    <!-- ***************************************** -->
-    <!-- https://github.com/WhisperSystems/libsignal-protocol-javascript/issues/6 -->
-    <script>
-        window.nodeRequire = require;
-        delete window.require;
-    </script>
-    <script src="app/utils/libsignal-protocol.js"></script>
-    <script>
-      window.require = window.nodeRequire;
-      delete window.nodeRequire;
-    </script>
-    <!-- ***************************************** -->
     <script>
       require('babel-register');
       require('./app/loader');

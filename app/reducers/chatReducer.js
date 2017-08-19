@@ -8,88 +8,22 @@
 
 import io from 'socket.io-client';
 import { deleteItem, addItem } from '../utils/chat-reducer-helper';
-import SignalStore from '../utils/signal-store';
-import {
-  toArrayBuffer,
-  preKeyToString,
-  preKeyToArrayBuffer,
-  arrayBufferToString,
-  stringToBase64,
-  base64ToString
-} from '../utils/signal-helpers';
-const KeyHelper = libsignal.KeyHelper;
 const serverHost = process.env.LOCAL_ENV ?
                     'http://localhost:9090' :
-                    'https://synapse-messaging.herokuapp.com';
+                    'https://synapse-mobile-server.herokuapp.com';
 
 const initialState = {
   host: serverHost,
   username: 'anonymous',
-  signal: {
-    store: new SignalStore(),
-    preKeyId: 1,
-    signedKeyId: 1,
-    sessions: {}
-  },
   conversations: {}
 }
 
 const chatReducer = (state = initialState, action) => {
-  const { user } = action;
-  const { onlineUsers, offlineUsers, signal } = state;
-  const userId = user ? user._id : null;
+  const userId = action.user ? action.user._id : null;
   switch (action.type) {
-    case 'SEND_KEY':
-      state.socket.emit('receive-key', {
-        key: preKeyToString(action.key),
-        userId: action.receiverId,
-        generatorId: state.user._id,
-      });
-      return {
-        ...state,
-        signal: {
-          ...state.signal,
-          preKeyId: action.preKeyId,
-          signedKeyId: action.signedKeyId
-        }
-      };
-
     case 'SEND_MESSAGE':
-      const msgReceiverSession = state.signal.sessions[action.receiverId];
-      const plainMessage = msgReceiverSession.messagesToSend.shift();
-
-      msgReceiverSession.builder.processPreKey(preKeyToArrayBuffer(action.key)).then(() => {
-        msgReceiverSession.cipher.encrypt(toArrayBuffer(plainMessage.text)).then( ciphertext => {
-          const b64Ciphertext = stringToBase64(ciphertext.body);
-          const cipheredMessage = {
-            ...plainMessage,
-            text: b64Ciphertext
-          };
-          state.socket.emit('chat-msg', { message: cipheredMessage });
-        });
-      });
+      state.socket.emit('chat-msg', { message: action.message });
       return state;
-
-    case 'STORE_MSG_REQUEST_KEY':
-      const userSession = state.signal.sessions[action.message.receiverId];
-      const updatedMsgToSend = [...userSession.messagesToSend, ...[action.message]];
-      state.socket.emit('request-key', {
-        generatorId: action.message.receiverId,
-        userId: state.user._id
-      });
-      return {
-        ...state,
-        signal: {
-          ...state.signal,
-          sessions: {
-            ...state.signal.sessions,
-            [action.message.receiverId]: {
-              ...userSession,
-              messagesToSend: updatedMsgToSend
-            }
-          }
-        }
-      };
 
     case 'ADD_MSG_TO_CHAT':
     const conversation = state.conversations[action.userId] || [];
@@ -116,28 +50,6 @@ const chatReducer = (state = initialState, action) => {
           ]
         }
       };
-    case 'LOAD_SESSION':
-      if (!signal.sessions[action.id]) {
-        const address = new libsignal.SignalProtocolAddress(`${action.id}`, 1);
-        const builder = new libsignal.SessionBuilder(signal.store, address);
-        const cipher = new libsignal.SessionCipher(signal.store, address);
-        return {
-          ...state,
-          signal: {
-            ...state.signal,
-            sessions: {
-              ...state.signal.sessions,
-              [action.id]: {
-                messagesToSend: [],
-                builder,
-                cipher
-              }
-            }
-          }
-        }
-      } else {
-        return state;
-      }
 
     case 'SET_USERNAME':
       return {
@@ -145,26 +57,20 @@ const chatReducer = (state = initialState, action) => {
         username: action.username
       }
 
-    case 'GENERATING_INIT_KEYS':
-      return {
-        ...state,
-        generatingKeys: true
-      }
-
-    case 'GENERATED_INIT_KEYS':
-      return {
-        ...state,
-        generatingKeys: false
-      }
-
     case 'INIT_CHAT':
       return {
         ...state,
-        user
+        user: action.user
       };
 
     case 'CONNECT':
-      const socket = io.connect(state.host, { query: "username=" + state.username } );
+      const socket = io.connect(state.host, { query: "username=" + state.username });
+      socket.on('connect', () => {
+        socket.on('hello1', () => console.log('hello1 dentro del callback'));
+        console.log('connect received');
+      });
+      socket.on('hello2', () => console.log('hello2 fuera del callback'));
+      console.log('listened to connect');
       return {
         ...state,
         socket
@@ -175,8 +81,8 @@ const chatReducer = (state = initialState, action) => {
 
       return {
         ...state,
-        offlineUsers: online ? deleteItem(userId, offlineUsers) : addItem(userId, user, offlineUsers),
-        onlineUsers: online ? addItem(userId, user, onlineUsers) : deleteItem(userId, onlineUsers),
+        offlineUsers: online ? deleteItem(userId, state.offlineUsers) : addItem(userId, action.user, state.offlineUsers),
+        onlineUsers: online ? addItem(userId, action.user, state.onlineUsers) : deleteItem(userId, state.onlineUsers),
       }
 
     case 'UPDATE_USER_LIST':

@@ -16,13 +16,9 @@ import { bindActionCreators } from 'redux';
 import {
   updateUserLists,
   connectChat,
-  generateAndSendKey,
-  parseKeyAndSendMessage,
   initChat,
   updateUserStatus,
-  addMessageToChat,
-  sendAcceptChat,
-  receivedAcceptChat
+  addMessageToChat
 } from '../actions/chatActions';
 
 import Contacts from './Contacts'
@@ -48,30 +44,20 @@ class ChatClient extends React.Component {
   }
 
   listenToEvents() {
+    console.log('Listening to users events');
     const { socket, user, receiver } = this.props;
 
     socket.on('init-connection-msg', (data) => {
+      console.log('init msg received');
       const { allUsers, user } = data;
       this.props.updateUserLists(allUsers);
-      this.props.initChat(user, this.props.signal);
-    });
-
-    socket.on('init-chat', (data) => {
-      this.props.sendAcceptChat(receiver._id);
-      socket.emit('accept-chat', {
-        receiverId: receiver._id,
-        emitterId: user._id
-      })
-    });
-
-    socket.on('accept-chat', (data) => {
-      this.props.receivedAcceptChat(user._id);
+      this.props.initChat(user);
     });
 
     socket.on('chat-msg', (data) => {
       const { message } = data;
       if (message.emitterId != this.props.user._id) {
-        this.props.addMessageToChat(message, message.emitterId, this.props.signal);
+        this.props.addMessageToChat(message, message.emitterId);
       }
     });
 
@@ -83,14 +69,6 @@ class ChatClient extends React.Component {
     socket.on('user-disconnected', (user) => {
       console.log('User disconnected', user);
       this.props.updateUserStatus(user, 'user-disconnected');
-    });
-
-    socket.on('request-key', data => {
-      this.props.generateAndSendKey(data, this.props.signal);
-    });
-
-    socket.on('receive-key', data => {
-      this.props.parseKeyAndSendMessage(data);
     });
   }
 
@@ -110,12 +88,8 @@ const mapDispatchToProps = (dispatch) => {
     updateUserLists,
     initChat,
     connectChat,
-    sendAcceptChat,
-    receivedAcceptChat,
     addMessageToChat,
-    updateUserStatus,
-    generateAndSendKey,
-    parseKeyAndSendMessage
+    updateUserStatus
   }, dispatch);
 };
 
@@ -127,7 +101,6 @@ const mapStateToProps = (state, ownProps) => {
     offlineUsers,
     socket,
     user,
-    signal
   } = state.chat;
 
   return {
@@ -136,7 +109,6 @@ const mapStateToProps = (state, ownProps) => {
     user,
     receiver,
     socket,
-    signal
   };
 };
 
