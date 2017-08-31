@@ -1,23 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { loadSession } from '../../../actions/chatActions';
 
-const UserItem = ({ id, username, loadSession }) => (
-  <Link
-    to={`/synapse/chat/${id}`}
-    className="collection-item user-item"
+const UserItem = ({ id, username, loadSession, isOnline }) => (
+  <div
+    className={
+      classNames("collection-item", "user-item", {
+      'online-user': isOnline,
+      'offline-user': !isOnline
+      })
+    }
     key={id}
-    onClick={(ev) => { loadSession(id) }}
+    onClick={(ev) => { if (isOnline) { loadSession(id) } }}
   >
-    <div>
+    <div className='user-item-username'>
       {username}
-      <span href="#!" className="secondary-content">
-        <i className="material-icons">send</i>
-      </span>
     </div>
-  </Link>
+    <span href="#!" className="user-item-send-icon">
+      <i className="material-icons">send</i>
+    </span>
+  </div>
 )
 
 const mapDispatchToProps = (dispatch) => {

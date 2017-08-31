@@ -42,6 +42,7 @@ nav {
 .user-list {
     overflow: auto;
     max-height: 35vh;
+    margin: 0;
 }
 
 .contacts-title {
@@ -50,7 +51,8 @@ nav {
 }
 
 .user-item {
-    cursor: pointer;
+  display: flex;
+  flex-direction: row;
 }
 
 .logo {
@@ -145,4 +147,47 @@ nav {
 
 .login-btn {
   padding: 30px;
+}
+
+.chat-client-page {
+  display: flex;
+  flex-direction: row;
+}
+
+.contacts-wrapper {
+  width: 100%;
+  flex: 1;
+  border-right: 1px solid #e0e0e0;
+}
+
+.chat-wrapper {
+  flex: 3;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.online-user {
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.offline-user {
+  background-color: lightgrey !important;
+  cursor: not-allowed;
+}
+
+.user-item-username {
+  flex: 3;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+  line-height: 2rem;
+}
+
+.user-item-send-icon {
+  color: #26a69a;
+  flex: 1;
+  text-align: right;
 }

@@ -123,6 +123,7 @@ const chatReducer = (state = initialState, action) => {
         const cipher = new libsignal.SessionCipher(signal.store, address);
         return {
           ...state,
+          currentReceiverId: action.id,
           signal: {
             ...state.signal,
             sessions: {

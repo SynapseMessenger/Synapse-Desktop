@@ -9,32 +9,12 @@
 'use babel';
 
 import React from 'react';
-import { connect } from 'react-redux';
 import UserList from './UserList';
-import Loader from '../../utils/components/Loader';
 
-const Contacts = ({ ready }) => (
-  <div>
-    { ready ? <UserList /> : <LoadingScreen /> }
+const Contacts = () => (
+  <div className='contacts-wrapper'>
+    <UserList />
   </div>
 );
 
-const LoadingScreen = () => (
-  <div className='loading-screen'>
-    <Loader />
-    <div className='loading-text'>LOADING</div>
-  </div>
-)
-
-
-const mapStateToProps = (state) => {
-  const { socket, generatingKeys } = state.chat;
-  const connected = socket && socket.connected;
-  return {
-    ready: connected && !generatingKeys,
-    generatingKeys,
-    connected
-  };
-};
-
-export default connect(mapStateToProps, null)(Contacts);
+export default Contacts;

@@ -11,29 +11,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Conversation from './Conversation';
+import EmptyConversation from './EmptyConversation';
 import MessageInput from './MessageInput';
 import { bindActionCreators } from 'redux';
 import { updateNavbar } from '../../actions/navbarActions';
 
 class Chat extends React.Component {
-
-  componentWillMount() {
-    this.props.updateNavbar(this.props.receiver.username, '/synapse/contacts');
-  }
-
   render() {
     const { user, receiver } = this.props;
     return (
-      <div className="container">
-        <Conversation receiverId={receiver._id} />
-        <MessageInput emitterId={user._id} receiverId={receiver._id} />
+      <div className="chat-wrapper">
+        {user && receiver ? (
+          <div>
+            <Conversation receiverId={receiver._id} />
+            <MessageInput emitterId={user._id} receiverId={receiver._id} />
+          </div>
+        ) : <EmptyConversation /> }
       </div>
     )
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const receiverId = ownProps.match.params.userId;
+  const receiverId = state.chat.currentReceiverId;
   const { onlineUsers, offlineUsers } = state.chat;
   return {
     receiver: onlineUsers[receiverId] || offlineUsers[receiverId] || null,

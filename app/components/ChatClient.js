@@ -27,6 +27,7 @@ import {
 
 import Contacts from './Contacts'
 import Chat from './Chat'
+import LoadingScreen from '../utils/components/LoadingScreen';
 
 class ChatClient extends React.Component {
 
@@ -95,13 +96,14 @@ class ChatClient extends React.Component {
   }
 
   render(){
-    const { match } = this.props;
-    return (
-      <div>
-        <Route path={match.url + '/contacts'} component={Contacts} />
-        <Route path={match.url + '/chat/:userId'} component={Chat} />
-      </div>
-    )
+    if (this.props.ready)
+      return (
+        <div className='chat-client-page'>
+          <Contacts />
+          <Chat />
+        </div>
+      )
+    else return <LoadingScreen />;
   }
 }
 
@@ -120,15 +122,19 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  const receiverId = ownProps.match.params.userId;
-  const receiver = receiverId ? allUsers.find((user) => user._id === receiverId) : null;
   const {
     onlineUsers,
     offlineUsers,
     socket,
     user,
-    signal
+    signal,
+    currentReceiverId,
+    generatingKeys,
   } = state.chat;
+
+  const receiver = currentReceiverId ? [...onlineUsers, ...offlineUsers].find((user) => user._id === currentReceiverId) : null;
+
+  const connected = socket && socket.connected;
 
   return {
     onlineUsers,
@@ -136,7 +142,8 @@ const mapStateToProps = (state, ownProps) => {
     user,
     receiver,
     socket,
-    signal
+    signal,
+    ready: connected && !generatingKeys,
   };
 };
 
