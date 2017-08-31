@@ -19,15 +19,15 @@ export default class LandingPage extends React.Component {
   render() {
     return (
       <div>
-        <div className="container">
-          <h4 className="center-align welcome-message">
+        <div className="landing-page">
+          <h4 className="center-align title-text">
             Welcome to Synapse
           </h4>
 
           <div className="logo"></div>
 
           <div className="center-align">
-            <Link className="btn btn-floating btn-large pulse" to="/login">
+            <Link className="btn btn-large pulse" to="/login">
               Login
             </Link>
           </div>

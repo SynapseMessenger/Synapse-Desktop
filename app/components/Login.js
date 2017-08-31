@@ -18,8 +18,8 @@ class Login extends React.Component {
   render(){
     return (
       <div>
-        <div className="container">
-          <h5 className="center-align">Login</h5>
+        <h5 className="center-align title-text">Login</h5>
+        <div className="login-page">
           <div className="left-align">
            <label className="username_label">
              Username:
@@ -29,7 +29,7 @@ class Login extends React.Component {
              />
             </label>
 
-            <div className="center-align">
+            <div className="center-align login-btn">
               <Link className="waves-effect waves-light btn" to="/synapse/contacts">
                 Continue
               </Link>

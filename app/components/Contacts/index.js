@@ -11,22 +11,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import UserList from './UserList';
+import Loader from '../../utils/components/Loader';
 
-const Contacts = ({ ready, connected, generatingKeys }) => (
-  <div className="container">
-    { ready ? <UserList /> : <LoadingScreen {...{connected, generatingKeys}} /> }
+const Contacts = ({ ready }) => (
+  <div>
+    { ready ? <UserList /> : <LoadingScreen /> }
   </div>
 );
 
-const LoadingScreen = ({ connected, generatingKeys }) => (
-  // TODO: Make this work.
-  <div className="greetings-message">
-    <p>
-      { connected ? 'Connected' : 'Not connected' }
-    </p>
-    <p>
-      { generatingKeys ? 'Generating keys' : 'Not generating keys' }
-    </p>
+const LoadingScreen = () => (
+  <div className='loading-screen'>
+    <Loader />
+    <div className='loading-text'>LOADING</div>
   </div>
 )
 

@@ -1,3 +1,10 @@
+#app, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+}
+
 .username_label {
     font-size: 1.2rem;
 }
@@ -47,17 +54,18 @@ nav {
 }
 
 .logo {
-    height: 200px;
+    height: 33vh;
     background-image: url('./logo.png');
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    margin: 50px;
+    margin: 75px;
 }
 
-.welcome-message {
+.title-text {
     font-weight: 300;
-    margin: 50px;
+    margin: 25px;
+    font-size: 45px;
 }
 
 .conversation {
@@ -100,4 +108,41 @@ nav {
 
 .message-text {
   width: 100%;
+}
+
+
+.loading-page-loader {
+  height: 150px !important;
+  width: 150px !important;
+}
+
+.loading-screen {
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.loading-text {
+  padding: 30px;
+  font-size: 25px;
+  color: #26A69A;
+}
+
+.landing-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 50px;
+}
+
+.login-btn {
+  padding: 30px;
 }
