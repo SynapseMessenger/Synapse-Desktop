@@ -44,6 +44,12 @@ class MessageInput extends React.Component {
           rows="5"
           cols="50"
           value={this.state.message}
+          onKeyPress={(ev) => {
+            if(ev.key === 'Enter') {
+              ev.preventDefault();
+              this.handleSend();
+            }
+          }}
           onChange={(ev) => { this.setState({ message: ev.target.value })} }
         >
         </textarea>
