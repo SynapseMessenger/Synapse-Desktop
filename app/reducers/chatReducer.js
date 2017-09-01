@@ -31,7 +31,8 @@ const initialState = {
     signedKeyId: 1,
     sessions: {}
   },
-  conversations: {}
+  conversations: {},
+  userSearchInput: ""
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -39,6 +40,11 @@ const chatReducer = (state = initialState, action) => {
   const { onlineUsers, offlineUsers, signal } = state;
   const userId = user ? user._id : null;
   switch (action.type) {
+    case 'USER_SEARCH_INPUT':
+      return {
+        ...state,
+        userSearchInput: action.value
+      };
     case 'SEND_KEY':
       state.socket.emit('receive-key', {
         key: preKeyToString(action.key),

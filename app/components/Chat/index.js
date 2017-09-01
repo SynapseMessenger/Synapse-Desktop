@@ -37,7 +37,7 @@ class Chat extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     receiver: state.chat.currentReceiver,
-    user: state.chat.user,
+    user: state.chat.user
   };
 };
 

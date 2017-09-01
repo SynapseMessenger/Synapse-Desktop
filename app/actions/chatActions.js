@@ -20,6 +20,13 @@ export const loadSession = (id) => {
   }
 }
 
+export const changeSearchInput = (value) => {
+  return {
+    type: 'USER_SEARCH_INPUT',
+    value
+  }
+};
+
 export const setUsername = (username) => {
   return {
     type: 'SET_USERNAME',
