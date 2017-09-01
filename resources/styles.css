@@ -34,7 +34,7 @@ nav {
 
 .user-list {
     overflow: auto;
-    max-height: 35vh;
+    height: 100vh;
     margin: 0;
 }
 
