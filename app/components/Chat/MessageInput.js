@@ -38,18 +38,16 @@ class MessageInput extends React.Component {
 
   render() {
     return (
-      <div className="row input-message-wrapper">
-        <div className="col s10">
-          <textarea
-            className="materialize-textarea input-message"
-            rows="5"
-            cols="50"
-            value={this.state.message}
-            onChange={(ev) => { this.setState({ message: ev.target.value })} }
-          >
-          </textarea>
-        </div>
-        <div className="col s2" onClick={this.handleSend}>
+      <div className="input-message-wrapper">
+        <textarea
+          className="materialize-textarea conversation-input"
+          rows="5"
+          cols="50"
+          value={this.state.message}
+          onChange={(ev) => { this.setState({ message: ev.target.value })} }
+        >
+        </textarea>
+        <div className="conversation-send-button" onClick={this.handleSend}>
           <a className="btn-floating waves-effect waves-light">
             <i className="material-icons">send</i>
           </a>

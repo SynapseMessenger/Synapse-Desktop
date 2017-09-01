@@ -77,12 +77,10 @@ class ChatClient extends React.Component {
     });
 
     socket.on('user-connected', (user) => {
-      console.log('User connected', user);
       this.props.updateUserStatus(user, 'user-connected');
     });
 
     socket.on('user-disconnected', (user) => {
-      console.log('User disconnected', user);
       this.props.updateUserStatus(user, 'user-disconnected');
     });
 

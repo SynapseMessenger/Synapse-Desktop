@@ -12,26 +12,20 @@ import Message from './Message';
 
 const Conversation = (props) => {
   const { messages, user } = props;
-  if (messages && messages.length > 0) {
-    return (
-      <div className="row">
-        <div className="col s12">
-          <div className="conversation">
-            { messages.map((message) => {
-              return (
-                <Message
-                  text={message.text}
-                  time={message.time}
-                  isOwn={message.emitterId === user._id}
-                  key={message.time + message.emitterId}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    )
-  } else return null;
+  return (
+    <div className="conversation">
+      { messages && messages.length > 0 && messages.map((message) => {
+        return (
+          <Message
+            text={message.text}
+            time={message.time}
+            isOwn={message.emitterId === user._id}
+            key={message.time + message.emitterId}
+          />
+        );
+      })}
+    </div>
+  )
 };
 
 const mapStateToProps = (state, ownProps) => {

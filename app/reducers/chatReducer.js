@@ -117,13 +117,14 @@ const chatReducer = (state = initialState, action) => {
         }
       };
     case 'LOAD_SESSION':
+      const currentReceiver = state.onlineUsers[action.id] || state.offlineUsers[action.id] || null;
       if (!signal.sessions[action.id]) {
         const address = new libsignal.SignalProtocolAddress(`${action.id}`, 1);
         const builder = new libsignal.SessionBuilder(signal.store, address);
         const cipher = new libsignal.SessionCipher(signal.store, address);
         return {
           ...state,
-          currentReceiverId: action.id,
+          currentReceiver,
           signal: {
             ...state.signal,
             sessions: {
@@ -137,7 +138,10 @@ const chatReducer = (state = initialState, action) => {
           }
         }
       } else {
-        return state;
+        return {
+          ...state,
+          currentReceiver,
+        };
       }
 
     case 'SET_USERNAME':

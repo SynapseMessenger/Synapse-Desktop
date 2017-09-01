@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import Conversation from './Conversation';
 import EmptyConversation from './EmptyConversation';
 import MessageInput from './MessageInput';
+import NavigationBar from './../NavigationBar';
 import { bindActionCreators } from 'redux';
 import { updateNavbar } from '../../actions/navbarActions';
 
@@ -22,7 +23,8 @@ class Chat extends React.Component {
     return (
       <div className="chat-wrapper">
         {user && receiver ? (
-          <div>
+          <div className='conversation-wrapper'>
+            <NavigationBar title={receiver.username} />
             <Conversation receiverId={receiver._id} />
             <MessageInput emitterId={user._id} receiverId={receiver._id} />
           </div>
@@ -33,10 +35,8 @@ class Chat extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const receiverId = state.chat.currentReceiverId;
-  const { onlineUsers, offlineUsers } = state.chat;
   return {
-    receiver: onlineUsers[receiverId] || offlineUsers[receiverId] || null,
+    receiver: state.chat.currentReceiver,
     user: state.chat.user,
   };
 };
